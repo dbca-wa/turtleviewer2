@@ -1,15 +1,45 @@
 Package: turtleviewer2
 Title: Turtle Data Viewer
 Version: 0.0.0.9000
-Authors@R: person('Florian', 'Mayer', email = 'Florian.Mayer@dbca.wa.gov.au', role = c('cre', 'aut'))
+Authors@R: 
+    c(person(given = c("Florian", "W."),
+             family = "Mayer",
+             role = c("aut", "cre"),
+             email = "Florian.Mayer@dbca.wa.gov.au",
+             comment = c(ORCID = "0000-0003-4269-4242")),
+      person(given = "DBCA",
+             role = c("cph", "fnd")),
+      person(given = "NWSFTCP",
+             role = "fnd"))
 Description: Interactive turtle data viewer.
 License: MIT + file LICENSE
+URL: https://github.com/dbca-wa/turtleviewer2
+BugReports: https://github.com/dbca-wa/turtleviewer2/issues
 Imports: 
     config (>= 0.3.1),
     golem (>= 0.3.2),
-    shiny (>= 1.7.1)
+    shiny (>= 1.7.1),
+    wastdr,
+    etlTurtleNesting,
+    leaflet,
+    fs,
+    here,
+    dplyr,
+    tidyr,
+    geojsonio,
+    geojsonsf,
+    janitor,
+    reactable,
+    RODBC,
+    DBI
+Suggests: 
+    spelling,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Remotes:
+    dbca-wa/etlTurtleNesting,
+    dbca-wa/wastdr
 Encoding: UTF-8
+Language: en-US
 LazyData: true
-RoxygenNote: 7.1.1
-URL: https://github.com/dbca-wa/turtleviewer2
-BugReports: https://github.com/dbca-wa/turtleviewer2/issues
+RoxygenNote: 7.1.2
