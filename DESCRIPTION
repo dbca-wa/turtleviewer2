@@ -19,26 +19,21 @@ Imports:
     config (>= 0.3.1),
     golem (>= 0.3.2),
     shiny (>= 1.7.1),
-    wastdr,
+    wastdr (>= 0.8.2),
     etlTurtleNesting,
-    leaflet,
-    fs,
     here,
-    dplyr,
-    tidyr,
-    geojsonio,
-    geojsonsf,
-    janitor,
-    reactable,
-    RODBC,
-    DBI
+    leaflet (>= 2.0.4.1),
+    leaflet.extras (>= 1.0.0),
+    geojsonio (>= 0.9.4),
+    geojsonlint (>= 0.4.0),
+    geojsonsf (>= 2.0.1)
 Suggests: 
     spelling,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Remotes:
-    dbca-wa/etlTurtleNesting,
-    dbca-wa/wastdr
+    github::dbca-wa/etlTurtleNesting,
+    github::dbca-wa/wastdr
 Encoding: UTF-8
 Language: en-US
 LazyData: true
