@@ -32,8 +32,7 @@ Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Remotes:
-    github::dbca-wa/etlTurtleNesting,
-    github::dbca-wa/wastdr
+    github::dbca-wa/etlTurtleNesting
 Encoding: UTF-8
 Language: en-US
 LazyData: true

@@ -13,8 +13,8 @@ RUN Rscript -e 'remotes::install_version("geojsonlint",upgrade="never", version 
 RUN Rscript -e 'remotes::install_version("geojsonio",upgrade="never", version = "0.9.4")'
 RUN Rscript -e 'remotes::install_version("leaflet.extras",upgrade="never", version = "1.0.0")'
 RUN Rscript -e 'remotes::install_github("r-spatial/sf@d31ff41135ba2bd93d2aeb1c9e9bef5ffdbd0ecb")'
-RUN Rscript -e 'remotes::install_github("dbca-wa/etlTurtleNesting",upgrade="never")'
-RUN Rscript -e 'remotes::install_github("dbca-wa/wastdr",upgrade="never")'
+RUN Rscript -e 'remotes::install_github("dbca-wa/etlTurtleNesting", upgrade="never")'
+#RUN Rscript -e 'remotes::install_github("dbca-wa/wastdr",upgrade="never")'
 RUN Rscript -e 'remotes::install_github("Thinkr-open/golem")'
 RUN mkdir /build_zone
 ADD . /build_zone

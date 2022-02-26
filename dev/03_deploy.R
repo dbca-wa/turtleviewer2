@@ -27,16 +27,22 @@ devtools::build()
 
 ## RStudio ----
 ## If you want to deploy on RStudio related platforms
-golem::add_rstudioconnect_file()
-golem::add_shinyappsio_file()
-golem::add_shinyserver_file()
+# golem::add_rstudioconnect_file()
+# golem::add_shinyappsio_file()
+# golem::add_shinyserver_file()
 
 ## Docker ----
 ## If you want to deploy via a generic Dockerfile
 golem::add_dockerfile()
 
+# replace in Dockerfile:
+# RUN Rscript -e 'remotes::install_github("r-spatial/sf@d31ff41135ba2bd93d2aeb1c9e9bef5ffdbd0ecb")'
+# RUN Rscript -e 'remotes::install_github("dbca-wa/etlTurtleNesting",upgrade="never")'
+# RUN Rscript -e 'remotes::install_github("dbca-wa/wastdr",upgrade="never")'
+# RUN Rscript -e 'remotes::install_github("Thinkr-open/golem")'
+
 ## If you want to deploy to ShinyProxy
-golem::add_dockerfile_shinyproxy()
+# golem::add_dockerfile_shinyproxy()
 
 ## If you want to deploy to Heroku
-golem::add_dockerfile_heroku()
+# golem::add_dockerfile_heroku()
