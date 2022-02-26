@@ -3,7 +3,7 @@ Title: Turtle Data Viewer
 Version: 0.0.0.9000
 Authors@R: person('Florian', 'Mayer', email = 'Florian.Mayer@dbca.wa.gov.au', role = c('cre', 'aut'))
 Description: Interactive turtle data viewer.
-License: What license is it under?
+License: MIT + file LICENSE
 Imports: 
     config (>= 0.3.1),
     golem (>= 0.3.2),

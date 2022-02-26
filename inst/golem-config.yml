@@ -5,4 +5,4 @@ default:
 production:
   app_prod: yes
 dev:
-  golem_wd: /home/florianm/projects/turtleviewer2
+  golem_wd: !expr here::here()
