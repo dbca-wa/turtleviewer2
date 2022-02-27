@@ -46,3 +46,6 @@ golem::add_dockerfile()
 
 ## If you want to deploy to Heroku
 # golem::add_dockerfile_heroku()
+
+# test locally
+system("docker build -t dbca-wa/turtleviewer2:latest")
