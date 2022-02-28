@@ -5,6 +5,8 @@
 #' @import shiny
 #' @noRd
 app_ui <- function(request) {
+  golem::favicon("www/favicon.ico")
+
   tagList(
     # Leave this function for adding external resources
     golem_add_external_resources(),
