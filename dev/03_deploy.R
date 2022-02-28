@@ -33,7 +33,7 @@ devtools::build()
 
 ## Docker ----
 ## If you want to deploy via a generic Dockerfile
-golem::add_dockerfile()
+golem::add_dockerfile(from="rocker/geospatial:4.1.2")
 
 # replace in Dockerfile:
 # RUN Rscript -e 'remotes::install_github("r-spatial/sf@d31ff41135ba2bd93d2aeb1c9e9bef5ffdbd0ecb")'
@@ -48,4 +48,4 @@ golem::add_dockerfile()
 # golem::add_dockerfile_heroku()
 
 # test locally
-system("docker build -t dbca-wa/turtleviewer2:latest")
+system("docker build . -t dbca-wa/turtleviewer2:latest")
