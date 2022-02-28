@@ -37,8 +37,8 @@ golem::add_dockerfile()
 
 # replace in Dockerfile:
 # RUN Rscript -e 'remotes::install_github("r-spatial/sf@d31ff41135ba2bd93d2aeb1c9e9bef5ffdbd0ecb")'
-# RUN Rscript -e 'remotes::install_github("dbca-wa/etlTurtleNesting",upgrade="never")'
-# RUN Rscript -e 'remotes::install_github("dbca-wa/wastdr",upgrade="never")'
+# RUN Rscript -e 'remotes::install_github("dbca-wa/etlTurtleNesting", upgrade="never")'
+# #RUN Rscript -e 'remotes::install_github("dbca-wa/wastdr",upgrade="never")'
 # RUN Rscript -e 'remotes::install_github("Thinkr-open/golem")'
 
 ## If you want to deploy to ShinyProxy

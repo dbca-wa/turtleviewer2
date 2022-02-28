@@ -1,39 +1,30 @@
 Package: turtleviewer2
 Title: Turtle Data Viewer
 Version: 0.0.4
-Authors@R: 
-    c(person(given = c("Florian", "W."),
-             family = "Mayer",
-             role = c("aut", "cre"),
-             email = "Florian.Mayer@dbca.wa.gov.au",
-             comment = c(ORCID = "0000-0003-4269-4242")),
-      person(given = "DBCA",
-             role = c("cph", "fnd")),
-      person(given = "NWSFTCP",
-             role = "fnd"))
+Authors@R: c(
+    person(c("Florian", "W."), "Mayer", , "Florian.Mayer@dbca.wa.gov.au", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0003-4269-4242")),
+    person("DBCA", role = c("cph", "fnd")),
+    person("NWSFTCP", role = "fnd")
+  )
 Description: Interactive turtle data viewer.
 License: MIT + file LICENSE
 URL: https://github.com/dbca-wa/turtleviewer2
 BugReports: https://github.com/dbca-wa/turtleviewer2/issues
 Imports: 
+    bs4Dash (>= 0.5.0),
     config (>= 0.3.1),
     golem (>= 0.3.2),
-    shiny (>= 1.7.1),
-    wastdr (>= 0.8.2),
-    etlTurtleNesting,
-    here,
     leaflet (>= 2.0.4.1),
     leaflet.extras (>= 1.0.0),
-    geojsonio (>= 0.9.4),
-    geojsonlint (>= 0.4.0),
-    geojsonsf (>= 2.0.1)
+    shiny (>= 1.7.1),
+    wastdr
 Suggests: 
     spelling,
     testthat (>= 3.0.0)
-Config/testthat/edition: 3
 Remotes:
-    github::dbca-wa/etlTurtleNesting,
     github::Thinkr-open/golem
+Config/testthat/edition: 3
 Encoding: UTF-8
 Language: en-US
 LazyData: true
