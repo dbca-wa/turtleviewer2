@@ -61,9 +61,10 @@ app_ui <- function(request) {
               bs4ValueBoxOutput("processed"),
               bs4ValueBoxOutput("missed"),
               bs4ValueBoxOutput("wastd_dl_on"),
+              bs4ValueBoxOutput("w2_dl_on"),
               type="deck"
             ),
-              leaflet::leafletOutput("empty_map")
+              leaflet::leafletOutput("wastd_map")
             ),
 
           tabItem(
@@ -72,7 +73,21 @@ app_ui <- function(request) {
 
           tabItem(
             tabName = "tab_disturbance"
+          ),
+
+          tabItem(
+            tabName = "tab_w2_places",
+            boxLayout(
+              # bs4ValueBoxOutput("total_emergences"),
+              # bs4ValueBoxOutput("processed"),
+              # bs4ValueBoxOutput("missed"),
+              bs4ValueBoxOutput("wastd_dl_on"),
+              bs4ValueBoxOutput("w2_dl_on"),
+              type="deck"
+            ),
+            leaflet::leafletOutput("w2_places_map")
           )
+
 
         ) # /tabItems
       ),
