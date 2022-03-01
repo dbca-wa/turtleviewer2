@@ -60,7 +60,8 @@ app_ui <- function(request) {
               bs4ValueBoxOutput("total_emergences"),
               bs4ValueBoxOutput("processed"),
               bs4ValueBoxOutput("missed"),
-              type="group"
+              bs4ValueBoxOutput("wastd_dl_on"),
+              type="deck"
             ),
               leaflet::leafletOutput("empty_map")
             ),
