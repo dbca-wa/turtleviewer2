@@ -57,10 +57,10 @@ app_server <- function(input, output, session) {
       glue::glue() %>%
       wastdr::wastdr_msg_info()
 
-    wastd_data <- wastdr::download_wastd_turtledata(
-      max_records = 1000 # TODO: drop limit for prod
-    )
-    saveRDS(wastd_data, file = here::here("inst/app/media/wastd_data.rds"))
+    # wastd_data <- wastdr::download_wastd_turtledata(
+    #   max_records = 1000 # TODO: drop limit for prod
+    # )
+    # saveRDS(wastd_data, file = here::here("inst/app/media/wastd_data.rds"))
 
 
     'WAStD Data saved locally to folder {here::here("inst/app/media")}.' %>%
@@ -154,9 +154,10 @@ app_server <- function(input, output, session) {
     )
   })
 
-  # W2 Places
+  # W2 Places -----------------------------------------------------------------#
   output$w2_places_map <- leaflet::renderLeaflet({
-    wastdr::map_wastd_wamtram_sites(wastd_data()$areas, wastd_sites(), w2_data()$sites)
+    wastdr::map_wastd_wamtram_sites(
+      wastd_sites()$localities, wastd_sites()$sites, w2_data()$sites)
   })
 
   # /outputs ------------------------------------------------------------------#
