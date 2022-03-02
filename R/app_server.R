@@ -66,6 +66,7 @@ app_server <- function(input, output, session) {
   })
 
   observeEvent(input$action_dl_wastd_data, {
+    "Downloading WAStD Data" %>% wastdr::wastdr_msg_info()
     toast(
       title = "Updating WAStD data",
       body = "This will take a few minutes...",
@@ -79,15 +80,18 @@ app_server <- function(input, output, session) {
       subtitle = "Reloading ...",
       options = list(autohide = TRUE, icon = "fas fa-tick", class="success")
     )
+    "Finished downloading WAStD Data" %>% wastdr::wastdr_msg_success()
   })
 
   observeEvent(input$action_dl_w2_data, {
+    "Downloading WAMTRAM Data" %>% wastdr::wastdr_msg_info()
     if (wastdr::w2_online() == FALSE) {
       toast(
         title = "WAMTRAM not accessible",
         body= "WAMTRAM is only accessible from the DBCA intranet with valid credentials.",
         options = list(autohide = TRUE, icon = "fas fa-exclamation-triangle")
       )
+      "Failed downloading WAStD Data" %>% wastdr::wastdr_msg_warn()
         } else {
           toast(
             title = "Updating WAMTRAM data",
@@ -102,6 +106,7 @@ app_server <- function(input, output, session) {
             subtitle = "Reloading ...",
             options = list(autohide = TRUE, icon = "fas fa-tick", class="success")
           )
+          "Finished downloading WAMTRAM Data" %>% wastdr::wastdr_msg_success()
         }
   })
 
