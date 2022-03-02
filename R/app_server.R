@@ -12,7 +12,7 @@ app_server <- function(input, output, session) {
   # WAStD areas cross session file reader
   # TODO https://stackoverflow.com/a/51108534/2813717
   fn_wastd_sites <- here::here("inst/wastd_sites.rds")
-  wastd_sites <- if (fs::file_exists(fn_wastd_sites) == FALSE) {
+  wastd_sites <- if (!fs::file_exists(fn_wastd_sites)) {
     NULL
   } else {
     reactiveFileReader(
@@ -25,7 +25,7 @@ app_server <- function(input, output, session) {
 
   # WAStD data cross session file reader
   fn_wastd_data <- here::here("inst/wastd_data.rds")
-  wastd_data <- if (fs::file_exists(fn_wastd_data) == FALSE) {
+  wastd_data <- if (!fs::file_exists(fn_wastd_data)) {
     NULL
   } else {
     reactiveFileReader(
@@ -38,7 +38,7 @@ app_server <- function(input, output, session) {
 
   # WAMTRAM data cross session file reader
   fn_w2_data <- here::here("inst/w2_data.rds")
-  w2_data <- if (fs::file_exists(fn_w2_data) == FALSE) {
+  w2_data <- if (!fs::file_exists(fn_w2_data)) {
     NULL
   } else {
     reactiveFileReader(
@@ -53,23 +53,31 @@ app_server <- function(input, output, session) {
   observeEvent(input$action_dl_wastd_sites, {
     toast(
       title = "Updating WAStD sites",
-      options = list(autohide = TRUE, icon = "fas fa-update", close = FALSE)
+      body = "This will take a few seconds...",
+      options = list(autohide = TRUE, icon = "fas fa-update", class="info")
     )
     sites <- wastdr::download_wastd_sites()
     saveRDS(sites, file = fn_wastd_sites)
+    toast(
+      title = "Finished WAStD sites download",
+      subtitle = "Reloading ...",
+      options = list(autohide = TRUE, icon = "fas fa-tick", class="success")
+    )
   })
 
   observeEvent(input$action_dl_wastd_data, {
     toast(
-      title = "Updating WAStD data, this will take a few minutes...",
-      options = list(autohide = TRUE, icon = "fas fa-update", close = FALSE)
+      title = "Updating WAStD data",
+      body = "This will take a few minutes...",
+      options = list(autohide = TRUE, icon = "fas fa-update", class="info")
     )
     # TODO remove max_records limit used for DEV
     wastd_data <- wastdr::download_wastd_turtledata(max_records = 1000)
     saveRDS(wastd_data, file = fn_wastd_data)
     toast(
       title = "Finished WAStD data download",
-      options = list(autohide = TRUE, icon = "fas fa-tick", close = FALSE)
+      subtitle = "Reloading ...",
+      options = list(autohide = TRUE, icon = "fas fa-tick", class="success")
     )
   })
 
@@ -77,20 +85,22 @@ app_server <- function(input, output, session) {
     if (wastdr::w2_online() == FALSE) {
       toast(
         title = "WAMTRAM not accessible",
-        body= "Need to run in DBCA intranet with credentials in env vars.",
-        options = list(autohide = TRUE, icon = "fas fa-update", close = FALSE)
+        body= "WAMTRAM is only accessible from the DBCA intranet with valid credentials.",
+        options = list(autohide = TRUE, icon = "fas fa-exclamation-triangle")
       )
         } else {
           toast(
             title = "Updating WAMTRAM data",
-            options = list(autohide = TRUE, icon = "fas fa-update", close = FALSE)
+            body = "This will take about a minute...",
+            options = list(autohide = TRUE, icon = "fas fa-update", class = "warning")
           )
 
           w2_data <- wastdr::download_w2_data(save = fn_w2_data)
 
           toast(
             title = "Finished WAMTRAM data download",
-            options = list(autohide = TRUE, icon = "fas fa-update", close = FALSE)
+            subtitle = "Reloading ...",
+            options = list(autohide = TRUE, icon = "fas fa-tick", class="success")
           )
         }
   })
@@ -156,19 +166,14 @@ app_server <- function(input, output, session) {
 
   # Processed data ------------------------------------------------------------#
   locations <- reactive({
-    if (is.null(w2_data())) {
-      NULL
-    } else {
-      c("", sort(unique(w2_data()$enc$location_code)))
-    }
+    req(w2_data())
+    c("", sort(unique(w2_data()$enc$location_code)))
   })
 
   places <- reactive({
-    if (is.null(w2_data())) {
-      NULL
-    } else {
+    req(w2_data())
       c("", sort(unique(w2_data()$enc$place_code)))
-    }
+
   })
 
   # sites_by_pc <- reactive({
@@ -178,20 +183,18 @@ app_server <- function(input, output, session) {
   # })
 
   enc_by_sites <- reactive({
-    if (is.null(w2_data())) {
-      NULL
-    } else {
+    req(w2_data())
       w2_data()$enc %>%
         dplyr::group_by(place_code) %>%
         dplyr::tally(name = "observations") %>%
         dplyr::ungroup()
-    }
+
   })
 
   homeless_places <- reactive({
-    if (is.null(w2_data()) | is.null(enc_by_sites())) {
-      NULL
-    } else {
+    req(w2_data())
+    req(enc_by_sites())
+
       w2_data()$sites %>%
         dplyr::filter(is.na(site_latitude)) %>%
         dplyr::mutate(
@@ -206,13 +209,12 @@ app_server <- function(input, output, session) {
         dplyr::filter(observations > 0) %>%
         dplyr::arrange(-observations) %>%
         janitor::clean_names(case = "title")
-    }
+
   })
 
   located_places <- reactive({
-    if (is.null(w2_data()) | is.null(enc_by_sites())) {
-      NULL
-    } else {
+    req(w2_data())
+    req(enc_by_sites())
       w2_data()$sites %>%
         dplyr::filter(!is.na(site_latitude)) %>%
         dplyr::mutate(
@@ -228,13 +230,11 @@ app_server <- function(input, output, session) {
         dplyr::filter(observations > 0) %>%
         dplyr::arrange(-observations) %>%
         janitor::clean_names(case = "title")
-    }
+
   })
 
   invalid_coords <- reactive({
-    if (is.null(w2_data())) {
-      NULL
-    } else {
+    req(w2_data())
       w2_data()$enc %>%
         dplyr::filter(
           longitude < -180 |
@@ -244,13 +244,11 @@ app_server <- function(input, output, session) {
             is.na(latitude) |
             is.na(longitude)
         )
-    }
+
   })
 
   unlikely_coords <- reactive({
-    if (is.null(w2_data())) {
-      NULL
-    } else {
+    req(w2_data())
       w2_data()$enc %>%
         dplyr::filter(
           longitude < 100 |
@@ -258,40 +256,27 @@ app_server <- function(input, output, session) {
             latitude < -45 |
             latitude > 0
         )
-    }
   })
 
   w2_obs_wastd_sites <- reactive({
-    if (is.null(w2_data()) | is.null(sites())) {
-      NULL
-    } else {
+    req(w2_data())
+    req(sites())
+
       w2_data()$enc %>%
         dplyr::filter(
           longitude > -180, longitude < 180, latitude > -90, latitude < 90
         ) %>%
         sf::st_as_sf(coords = c("longitude", "latitude"), crs = 4326) %>%
         sf::st_join(sites(), left = TRUE)
-    }
+
   })
 
   # Outputs -------------------------------------------------------------------#
   #
   output$wastd_map <- leaflet::renderLeaflet({
-    x <- wastd_data()
+    req(wastd_data())
+    wastdr::map_wastd(wastd_data(), cluster = TRUE)
 
-    if (is.null(x)) {
-      leaflet::leaflet(width = 800, height = 600) %>%
-        leaflet::addProviderTiles("Esri.WorldImagery", group = "Basemap") %>%
-        leaflet::addProviderTiles(
-          "OpenStreetMap.Mapnik",
-          group = "Basemap",
-          options = leaflet::providerTileOptions(opacity = 0.35)
-        ) %>%
-        leaflet.extras::addFullscreenControl(pseudoFullscreen = TRUE) %>%
-        leaflet::clearBounds()
-    } else {
-      wastdr::map_wastd(x)
-    }
   })
 
   output$total_emergences <- renderbs4ValueBox({
@@ -322,40 +307,50 @@ app_server <- function(input, output, session) {
   })
 
   output$wastd_dl_on <- renderbs4ValueBox({
+    req(wastd_data())
     bs4ValueBox(
       value = wastd_data()$downloaded_on,
       subtitle = "WAStD data downloaded",
-      color = "success",
+      color = "info",
+      gradient=TRUE,
       icon = icon("download")
     )
   })
 
   output$w2_dl_on <- renderbs4ValueBox({
+    req(w2_data())
     bs4ValueBox(
       value = w2_data()$downloaded_on,
       subtitle = "WAMTRAM data downloaded",
-      color = "success",
+      color = "info",
+      gradient=TRUE,
       icon = icon("download")
     )
   })
 
   output$sites_dl_on <- renderbs4ValueBox({
+    req(wastd_sites())
     bs4ValueBox(
       value = wastd_sites()$downloaded_on,
       subtitle = "WAStD Sites downloaded",
-      color = "success",
+      color = "info",
+      gradient=TRUE,
       icon = icon("download")
     )
   })
 
   # W2 Places -----------------------------------------------------------------#
   output$w2_places_map <- leaflet::renderLeaflet({
+    req(wastd_sites())
+    req(w2_data())
+
     wastdr::map_wastd_wamtram_sites(
       wastd_sites()$localities, wastd_sites()$sites, w2_data()$sites
     )
   })
 
   output$located_places <- reactable::renderReactable({
+    req(located_places())
     reactable::reactable(
       located_places(),
       sortable = TRUE,
@@ -366,6 +361,7 @@ app_server <- function(input, output, session) {
   })
 
   output$homeless_places <- reactable::renderReactable({
+    req(homeless_places())
     reactable::reactable(
       homeless_places(),
       sortable = TRUE,
@@ -377,6 +373,7 @@ app_server <- function(input, output, session) {
 
   # W2 Observations -----------------------------------------------------------#
   output$impossible_coords <- reactable::renderReactable({
+    req(invalid_coords())
     reactable::reactable(
       invalid_coords(),
       sortable = TRUE,
@@ -387,6 +384,7 @@ app_server <- function(input, output, session) {
   })
 
   output$unlikely_coords <- reactable::renderReactable({
+    req(unlikely_coords())
     reactable::reactable(
       unlikely_coords(),
       sortable = TRUE,

@@ -39,7 +39,7 @@ golem::add_dockerfile(from="rocker/geospatial:4.1.2")
 # RUN Rscript -e 'remotes::install_github("r-spatial/sf")'
 # RUN Rscript -e 'remotes::install_github("Thinkr-open/golem")'
 # RUN Rscript -e 'remotes::install_github("RinteRface/bs4Dash")'
-# RUN Rscript -e 'remotes::install_github("dbca-wa/wastdr", version = "0.8.5")'
+# RUN Rscript -e 'remotes::install_github("dbca-wa/wastdr", version = "0.8.6")'
 
 ## If you want to deploy to ShinyProxy
 # golem::add_dockerfile_shinyproxy()
@@ -47,5 +47,5 @@ golem::add_dockerfile(from="rocker/geospatial:4.1.2")
 ## If you want to deploy to Heroku
 # golem::add_dockerfile_heroku()
 
-# test locally
+
 system("docker build . -t dbca-wa/turtleviewer2:latest")

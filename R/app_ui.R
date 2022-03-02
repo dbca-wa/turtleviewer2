@@ -86,20 +86,57 @@ app_ui <- function(request) {
         tabItems(
           tabItem(
             tabName = "tab_turtle_nesting",
-            boxLayout(
-              bs4ValueBoxOutput("total_emergences"),
-              bs4ValueBoxOutput("processed"),
-              bs4ValueBoxOutput("missed"),
-              bs4ValueBoxOutput("wastd_dl_on"),
-              bs4ValueBoxOutput("w2_dl_on"),
-              bs4ValueBoxOutput("sites_dl_on"),
-              type = "deck"
+            fluidRow(
+              boxLayout(
+                bs4ValueBoxOutput("total_emergences", width=2),
+                bs4ValueBoxOutput("processed", width=2),
+                bs4ValueBoxOutput("missed", width=2),
+                bs4ValueBoxOutput("wastd_dl_on", width=2),
+                bs4ValueBoxOutput("w2_dl_on", width=2),
+                bs4ValueBoxOutput("sites_dl_on", width=2),
+                type = "group"
+              )
             ),
-            shiny::tags$h3("Map of all data"),
-            leaflet::leafletOutput("wastd_map"),
-            shiny::tags$h3("Total emergences: Processed and missed"),
-            shiny::tags$h3("Processed turtles: New, resightings, remigrants"),
-            shiny::tags$h3("Total emergences: Nesting success")
+            fluidRow(
+              bs4Card(
+                leaflet::leafletOutput("wastd_map"),
+                title="All WAStD data",
+                # footer = "footer",
+                width = 6,
+                maximisable=TRUE,
+                # label = "label",
+                id="box_all_wastd_data"
+              ),
+              bs4Card(
+                # table or figure
+                title="Total emergences: Processed and missed",
+                footer = "coming soon",
+                width = 6,
+                maximisable=TRUE,
+                # label = "label",
+                id="box_total_emergences"
+              ),
+            ),
+            fluidRow(
+              bs4Card(
+                # leaflet::leafletOutput("wastd_map"),
+                title="Processed turtles: New, resightings, remigrants",
+                footer = "coming soon",
+                width = 6,
+                maximisable=TRUE,
+                # label = "label",
+                id="box_new_resightings_remigrants"
+              ),
+              bs4Card(
+                # table or figure
+                title="Total emergences: Nesting success",
+                footer = "coming soon",
+                width = 6,
+                maximisable=TRUE,
+                # label = "label",
+                id="box_nesting_success"
+              ),
+            )
           ),
           tabItem(
             tabName = "tab_turtle_hatching",
@@ -117,14 +154,6 @@ app_ui <- function(request) {
           ),
           tabItem(
             tabName = "tab_w2_places",
-            # boxLayout(
-            # bs4ValueBoxOutput("total_emergences"),
-            # bs4ValueBoxOutput("processed"),
-            # bs4ValueBoxOutput("missed"),
-            # bs4ValueBoxOutput("wastd_dl_on"),
-            # bs4ValueBoxOutput("w2_dl_on"),
-            # type="deck"
-            # ),
             leaflet::leafletOutput("w2_places_map"),
             shiny::tags$h3("Located W2 places"),
             reactable::reactableOutput("located_places"),

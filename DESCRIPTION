@@ -27,7 +27,7 @@ Imports:
     sf (>= 1.0-7),
     shiny (>= 1.7.1),
     tidyr,
-    wastdr (>= 0.8.5),
+    wastdr (>= 0.8.6),
     geojsonio, 
     geojsonsf, 
     odbc, 

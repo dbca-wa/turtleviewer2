@@ -21,12 +21,12 @@ RUN Rscript -e 'remotes::install_version("janitor",upgrade="never", version = "2
 RUN Rscript -e 'remotes::install_github("r-spatial/sf")'
 RUN Rscript -e 'remotes::install_github("Thinkr-open/golem")'
 RUN Rscript -e 'remotes::install_github("RinteRface/bs4Dash")'
-RUN Rscript -e 'remotes::install_github("dbca-wa/wastdr", version = "0.8.5")'
+RUN Rscript -e 'remotes::install_github("dbca-wa/wastdr", upgrade = "always", force=TRUE)'
 
 RUN mkdir /app
 ADD . /app
 WORKDIR /app
-RUN R -e 'remotes::install_local(upgrade="never", dependencies = FALSE)'
+RUN R -e 'remotes::install_local(upgrade="always", force=TRUE, dependencies = TRUE)'
 RUN rm -rf /app
 RUN mkdir -p /app/inst
 EXPOSE 80
