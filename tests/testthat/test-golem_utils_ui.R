@@ -91,7 +91,7 @@ test_that("Test undisplay works", {
     '<p src="plop" style="display: none;">pouet</p>'
   )
 
-  b <- shiny::actionButton("go_filter", "go")
+  b <- bs4Dash::actionButton("go_filter", "go")
   expect_s3_class(b, "shiny.tag")
   expect_equal(
     as.character(b),

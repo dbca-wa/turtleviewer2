@@ -11,23 +11,33 @@ Description: Interactive turtle data viewer.
 License: MIT + file LICENSE
 URL: https://github.com/dbca-wa/turtleviewer2
 BugReports: https://github.com/dbca-wa/turtleviewer2/issues
+Depends: 
+    R (>= 4.1.0)
 Imports: 
     bs4Dash (>= 0.5.0),
     config (>= 0.3.1),
+    dplyr,
+    glue,
     golem (>= 0.3.2),
+    here,
+    janitor,
     leaflet (>= 2.0.4.1),
     leaflet.extras (>= 1.0.0),
+    reactable,
+    sf (>= 1.0-7),
     shiny (>= 1.7.1),
-    sf,
-    wastdr,
-    etlTurtleNesting
+    tidyr,
+    wastdr (>= 0.8.5),
+    geojsonio, 
+    geojsonsf, 
+    odbc, 
+    DBI
 Suggests: 
     spelling,
     testthat (>= 3.0.0)
 Remotes:
-    github::Thinkr-open/golem,
     github::dbca-wa/wastdr,
-    github::dbca-wa/etlTurtleNesting
+    github::Thinkr-open/golem
 Config/testthat/edition: 3
 Encoding: UTF-8
 Language: en-US

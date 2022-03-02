@@ -23,32 +23,62 @@ app_ui <- function(request) {
         )
       ),
       sidebar = dashboardSidebar(
-        sidebarHeader("WAStD"),
         sidebarMenu(
-          id = "sidebar_menu_wastd",
+          id = "sidebar_menu",
           menuItem(
-            text = "Turtle Nesting",
-            tabName = "tab_turtle_nesting"
+            text = "WA Sea Turtle DB",
+            tabName = "tab_wastd",
+            startExpanded = TRUE,
+            menuSubItem(
+              text = "Turtle Nesting",
+              tabName = "tab_turtle_nesting",
+              icon = icon("home")
+            ),
+            menuSubItem(
+              text = "Turtle Hatching",
+              tabName = "tab_turtle_hatching",
+              icon = icon("egg")
+            ),
+            menuSubItem(
+              text = "Disturbance",
+              tabName = "tab_disturbance",
+              icon = icon("bolt")
+            ),
+            menuSubItem(
+              text = "Incidents",
+              tabName = "tab_strandings",
+              icon = icon("skull-crossbones")
+            )
           ),
           menuItem(
-            text = "Turtle Hatching",
-            tabName = "tab_turtle_hatching"
+            text = "Turtle Tagging DB",
+            tabName = "tab_wamtram",
+            startExpanded = TRUE,
+            menuSubItem(
+              text = "Places",
+              tabName = "tab_w2_places",
+              icon = icon("map")
+            ),
+            menuSubItem(
+              text = "Observations",
+              tabName = "tab_w2_observations",
+              icon = icon("pencil-alt")
+            )
           ),
-          menuItem(
-            text = "Disturbance",
-            tabName = "tab_disturbance"
-          )
-        ),
-        sidebarHeader("WAMTRAM 2"),
-        sidebarMenu(
-          id = "sidebar_menu_wamtram",
-          menuItem(
-            text = "Places",
-            tabName = "tab_w2_places"
+          bs4Dash::actionButton(
+            "action_dl_wastd_sites",
+            "Update WAStD Sites",
+            status = "info"
           ),
-          menuItem(
-            text = "Observations",
-            tabName = "tab_w2_observations"
+          bs4Dash::actionButton(
+            "action_dl_wastd_data",
+            "Update WAStD Data",
+            status = "info"
+          ),
+          bs4Dash::actionButton(
+            "action_dl_w2_data",
+            "Update WAMTRAM data",
+            status = "info"
           )
         )
       ),
@@ -62,33 +92,52 @@ app_ui <- function(request) {
               bs4ValueBoxOutput("missed"),
               bs4ValueBoxOutput("wastd_dl_on"),
               bs4ValueBoxOutput("w2_dl_on"),
-              type="deck"
+              bs4ValueBoxOutput("sites_dl_on"),
+              type = "deck"
             ),
-              leaflet::leafletOutput("wastd_map")
-            ),
-
-          tabItem(
-            tabName = "tab_turtle_hatching"
+            shiny::tags$h3("Map of all data"),
+            leaflet::leafletOutput("wastd_map"),
+            shiny::tags$h3("Total emergences: Processed and missed"),
+            shiny::tags$h3("Processed turtles: New, resightings, remigrants"),
+            shiny::tags$h3("Total emergences: Nesting success")
           ),
-
           tabItem(
-            tabName = "tab_disturbance"
+            tabName = "tab_turtle_hatching",
+            shiny::tags$h3("Hatching and emergence success")
           ),
-
+          tabItem(
+            tabName = "tab_disturbance",
+            shiny::tags$h3("Map of disturbances"),
+            shiny::tags$h3("Disturbances by season and cause")
+          ),
+          tabItem(
+            tabName = "tab_strandings",
+            shiny::tags$h3("Map of Marine Wildlife Incidents"),
+            shiny::tags$h3("Marine Wildlife Incidents by season and cause")
+          ),
           tabItem(
             tabName = "tab_w2_places",
             # boxLayout(
-              # bs4ValueBoxOutput("total_emergences"),
-              # bs4ValueBoxOutput("processed"),
-              # bs4ValueBoxOutput("missed"),
-              # bs4ValueBoxOutput("wastd_dl_on"),
-              # bs4ValueBoxOutput("w2_dl_on"),
-              # type="deck"
+            # bs4ValueBoxOutput("total_emergences"),
+            # bs4ValueBoxOutput("processed"),
+            # bs4ValueBoxOutput("missed"),
+            # bs4ValueBoxOutput("wastd_dl_on"),
+            # bs4ValueBoxOutput("w2_dl_on"),
+            # type="deck"
             # ),
-            leaflet::leafletOutput("w2_places_map")
+            leaflet::leafletOutput("w2_places_map"),
+            shiny::tags$h3("Located W2 places"),
+            reactable::reactableOutput("located_places"),
+            shiny::tags$h3("Homeless W2 places"),
+            reactable::reactableOutput("homeless_places")
+          ),
+          tabItem(
+            tabName = "tab_w2_observations",
+            shiny::tags$h3("Impossible coordinates"),
+            reactable::reactableOutput("impossible_coords"),
+            shiny::tags$h3("Unlikely coordinates"),
+            reactable::reactableOutput("unlikely_coords")
           )
-
-
         ) # /tabItems
       ),
       # controlbar = dashboardControlbar(),

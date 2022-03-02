@@ -144,7 +144,7 @@ tagRemoveAttributes <- function(tag, ...) {
 #' ## Hide
 #' a <- shiny::tags$p(src = "plop", "pouet")
 #' undisplay(a)
-#' b <- shiny::actionButton("go_filter", "go")
+#' b <- bs4Dash::actionButton("go_filter", "go")
 #' undisplay(b)
 #' @importFrom shiny tagList
 undisplay <- function(tag) {

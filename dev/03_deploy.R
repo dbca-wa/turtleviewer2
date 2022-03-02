@@ -36,10 +36,10 @@ devtools::build()
 golem::add_dockerfile(from="rocker/geospatial:4.1.2")
 
 # replace in Dockerfile:
-# RUN Rscript -e 'remotes::install_github("r-spatial/sf@d31ff41135ba2bd93d2aeb1c9e9bef5ffdbd0ecb")'
-# RUN Rscript -e 'remotes::install_github("dbca-wa/etlTurtleNesting", upgrade="never")'
-# #RUN Rscript -e 'remotes::install_github("dbca-wa/wastdr",upgrade="never")'
+# RUN Rscript -e 'remotes::install_github("r-spatial/sf")'
 # RUN Rscript -e 'remotes::install_github("Thinkr-open/golem")'
+# RUN Rscript -e 'remotes::install_github("RinteRface/bs4Dash")'
+# RUN Rscript -e 'remotes::install_github("dbca-wa/wastdr", version = "0.8.5")'
 
 ## If you want to deploy to ShinyProxy
 # golem::add_dockerfile_shinyproxy()
