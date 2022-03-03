@@ -196,13 +196,20 @@ app_ui <- function(request) {
           tabItem(
             tabName = "tab_w2_observations",
             fluidRow(
+            bs4Card(
               # uiOutput("flt_w2_data_loc"),
-              uiOutput("flt_w2_data_plc"),
-              uiOutput("flt_w2_data_obs")
+              tags$span(uiOutput("flt_w2_data_plc"), class="m-2"),
+              tags$span(uiOutput("flt_w2_data_obs"), class="m-2"),
+              bs4ValueBoxOutput("vb_w2_plc_lat", width=12),
+              bs4ValueBoxOutput("vb_w2_plc_lon", width=12),
+              width=4
             ),
             bs4Card(
-              leaflet::leafletOutput("map_w2_obs")
-            ),
+              title="WAMTRAM 2 Observations",
+              footer="Select Place Code or Observation ID to filter data",
+              leaflet::leafletOutput("map_w2_obs"),
+              width=8
+            )),
             fluidRow(
               tabBox(
                 tabPanel(

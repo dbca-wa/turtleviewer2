@@ -445,6 +445,43 @@ app_server <- function(input, output, session) {
   })
 
   # W2 Observations -----------------------------------------------------------#
+  #
+  selected_place <- reactive({
+    req(w2_data())
+    req(input$w2_plc)
+    w2_data()$sites %>% dplyr::filter(code == input$w2_plc)
+  })
+  output$txt_w2_plc_lat <- renderText({
+    req(selected_place())
+    glue::glue("Lat {round(selected_place()$site_latitude, 5)}")
+  })
+  output$txt_w2_plc_lon <- renderText({
+    req(selected_place())
+    glue::glue("Lon {round(selected_place()$site_longitude, 5)}")
+  })
+
+  output$vb_w2_plc_lat <- renderbs4ValueBox({
+    req(wastd_sites())
+    bs4ValueBox(
+      value = tags$h3(round(selected_place()$site_latitude, 5)),
+      subtitle = "W2 Site Lat",
+      color = "navy",
+      gradient=TRUE,
+      icon = icon("crosshairs")
+    )
+  })
+
+  output$vb_w2_plc_lon <- renderbs4ValueBox({
+    req(wastd_sites())
+    bs4ValueBox(
+      value = tags$h3(round(selected_place()$site_longitude, 5)),
+      subtitle = "W2 Site Lon",
+      color = "navy",
+      gradient=TRUE,
+      icon = icon("crosshairs")
+    )
+  })
+
   output$map_w2_obs <- leaflet::renderLeaflet({
     req(w2_data())
 
