@@ -14,6 +14,7 @@ app_ui <- function(request) {
     dashboardPage(
       fullscreen = TRUE,
       scrollToTop = TRUE,
+      preloader = list(html = waiter::spin_chasing_dots(), color = "#333e48"),
       header = dashboardHeader(
         bs4Dash::actionButton(
           "action_dl_wastd_sites",
