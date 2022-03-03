@@ -25,27 +25,17 @@ rhub::check_for_cran()
 ## sent to CRAN, or to a package manager
 devtools::build()
 
-## RStudio ----
-## If you want to deploy on RStudio related platforms
-# golem::add_rstudioconnect_file()
-# golem::add_shinyappsio_file()
-# golem::add_shinyserver_file()
 
 ## Docker ----
 ## If you want to deploy via a generic Dockerfile
 golem::add_dockerfile(from="rocker/geospatial:4.1.2")
 
 # replace in Dockerfile:
+# RUN apt-get update && apt-get install -y  gdal-bin git-core freetds-dev tdsodbc libcurl4-openssl-dev libgdal-dev libgeos-dev libgeos++-dev libgit2-dev libicu-dev libjq-dev libpng-dev libproj-dev libprotobuf-dev libssl-dev libudunits2-dev libv8-dev libxml2-dev make pandoc pandoc-citeproc protobuf-compiler libprotoc-dev unixodbc-dev zlib1g-dev && rm -rf /var/lib/apt/lists/*
+#  ...
 # RUN Rscript -e 'remotes::install_github("r-spatial/sf")'
 # RUN Rscript -e 'remotes::install_github("Thinkr-open/golem")'
 # RUN Rscript -e 'remotes::install_github("RinteRface/bs4Dash")'
 # RUN Rscript -e 'remotes::install_github("dbca-wa/wastdr", version = "0.8.6")'
-
-## If you want to deploy to ShinyProxy
-# golem::add_dockerfile_shinyproxy()
-
-## If you want to deploy to Heroku
-# golem::add_dockerfile_heroku()
-
 
 system("docker build . -t dbca-wa/turtleviewer2:latest")

@@ -284,39 +284,52 @@ app_server <- function(input, output, session) {
 
   })
 
-  output$total_emergences <- renderbs4ValueBox({
+  output$vb_total_emergences <- renderbs4ValueBox({
     bs4ValueBox(
-      value = 1234,
+      value = tags$h3("1234"),
       subtitle = "Total Emergences",
-      color = "primary",
-      icon = icon("home")
+      color = "indigo",
+      gradient=TRUE,
+      icon = icon("arrow-up")
     )
   })
 
-  output$processed <- renderbs4ValueBox({
+  output$vb_proc_mis <- renderbs4ValueBox({
     bs4ValueBox(
-      value = 1234,
-      subtitle = "Processed",
-      color = "success",
+      value = tags$h3("1234 / 500"),
+      subtitle = "Processed / Missed",
+      color = "lime",
+      gradient=TRUE,
       icon = icon("pencil-alt")
     )
   })
 
-  output$missed <- renderbs4ValueBox({
+  output$vb_new_res_rem <- renderbs4ValueBox({
     bs4ValueBox(
-      value = 1234,
-      subtitle = "Missed",
-      color = "warning",
-      icon = icon("question")
+      value = tags$h3("100 / 200 / 100"),
+      subtitle = "New / Resighted / Remigrant",
+      color = "orange",
+      gradient=TRUE,
+      icon = icon("eye")
+    )
+  })
+
+  output$vb_nesting_success <- renderbs4ValueBox({
+    bs4ValueBox(
+      value = tags$h3("50%"),
+      subtitle = "Nesting sucess",
+      color = "teal",
+      gradient=TRUE,
+      icon = icon("thumbs-up")
     )
   })
 
   output$wastd_dl_on <- renderbs4ValueBox({
     req(wastd_data())
     bs4ValueBox(
-      value = wastd_data()$downloaded_on,
+      value = tags$h3(wastd_data()$downloaded_on %>% lubridate::with_tz("Australia/Perth")),
       subtitle = "WAStD data downloaded",
-      color = "info",
+      color = "navy",
       gradient=TRUE,
       icon = icon("download")
     )
@@ -325,9 +338,9 @@ app_server <- function(input, output, session) {
   output$w2_dl_on <- renderbs4ValueBox({
     req(w2_data())
     bs4ValueBox(
-      value = w2_data()$downloaded_on,
+      value = tags$h3(w2_data()$downloaded_on %>% lubridate::with_tz("Australia/Perth")),
       subtitle = "WAMTRAM data downloaded",
-      color = "info",
+      color = "navy",
       gradient=TRUE,
       icon = icon("download")
     )
@@ -336,15 +349,55 @@ app_server <- function(input, output, session) {
   output$sites_dl_on <- renderbs4ValueBox({
     req(wastd_sites())
     bs4ValueBox(
-      value = wastd_sites()$downloaded_on,
+      value = tags$h3(wastd_sites()$downloaded_on %>% lubridate::with_tz("Australia/Perth")),
       subtitle = "WAStD Sites downloaded",
-      color = "info",
+      color = "navy",
       gradient=TRUE,
       icon = icon("download")
     )
   })
 
   # W2 Places -----------------------------------------------------------------#
+  output$vb_place_loc_rate <- renderbs4ValueBox({
+    req(located_places())
+    req(wastd_sites())
+
+    x <- round(100*(nrow(located_places()) / nrow(w2_data()$sites)), 0)
+
+    bs4ValueBox(
+      value = tags$h3(x),
+      subtitle = "% W2 places located",
+      color = dplyr::case_when(
+        x < 70 ~ "maroon",
+        x < 90 ~ "orange",
+        x < 95 ~ "olive",
+        TRUE ~ "lime"
+      ),
+      gradient=TRUE,
+      icon = icon("chart-area")
+    )
+  })
+
+  output$vb_place_homeless_rate <- renderbs4ValueBox({
+    req(homeless_places())
+    req(wastd_sites())
+
+    x <- round(100*(nrow(homeless_places()) / nrow(w2_data()$sites)), 0)
+
+    bs4ValueBox(
+      value = tags$h3(x),
+      subtitle = "% W2 places need coords",
+      color = dplyr::case_when(
+        x > 20  ~ "maroon",
+        x > 10 ~ "orange",
+        x > 5 ~ "olive",
+        TRUE ~ "lime"
+      ),
+      gradient=TRUE,
+      icon = icon("chart-area")
+    )
+  })
+
   output$w2_places_map <- leaflet::renderLeaflet({
     req(wastd_sites())
     req(w2_data())

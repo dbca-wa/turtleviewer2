@@ -15,6 +15,30 @@ app_ui <- function(request) {
       fullscreen = TRUE,
       scrollToTop = TRUE,
       header = dashboardHeader(
+        bs4Dash::actionButton(
+          "action_dl_wastd_sites",
+          "Update WAStD Sites",
+          status = "primary",
+          outline = TRUE,
+          size = "xs",
+          class = "m-1"
+        ),
+        bs4Dash::actionButton(
+          "action_dl_wastd_data",
+          "Update WAStD Data",
+          status = "primary",
+          outline = TRUE,
+          size = "xs",
+          class = "m-1"
+        ),
+        bs4Dash::actionButton(
+          "action_dl_w2_data",
+          "Update WAMTRAM data",
+          status = "primary",
+          outline = TRUE,
+          size = "xs",
+          class = "m-1"
+        ),
         title = dashboardBrand(
           title = "WA Turtle Data",
           color = "primary",
@@ -64,21 +88,6 @@ app_ui <- function(request) {
               tabName = "tab_w2_observations",
               icon = icon("pencil-alt")
             )
-          ),
-          bs4Dash::actionButton(
-            "action_dl_wastd_sites",
-            "Update WAStD Sites",
-            status = "info"
-          ),
-          bs4Dash::actionButton(
-            "action_dl_wastd_data",
-            "Update WAStD Data",
-            status = "info"
-          ),
-          bs4Dash::actionButton(
-            "action_dl_w2_data",
-            "Update WAMTRAM data",
-            status = "info"
           )
         )
       ),
@@ -88,54 +97,50 @@ app_ui <- function(request) {
             tabName = "tab_turtle_nesting",
             fluidRow(
               boxLayout(
-                bs4ValueBoxOutput("total_emergences", width=2),
-                bs4ValueBoxOutput("processed", width=2),
-                bs4ValueBoxOutput("missed", width=2),
-                bs4ValueBoxOutput("wastd_dl_on", width=2),
-                bs4ValueBoxOutput("w2_dl_on", width=2),
-                bs4ValueBoxOutput("sites_dl_on", width=2),
+                bs4ValueBoxOutput("vb_total_emergences", width=3),
+                bs4ValueBoxOutput("vb_proc_mis", width=3),
+                bs4ValueBoxOutput("vb_new_res_rem", width=3),
+                bs4ValueBoxOutput("vb_nesting_success", width=3),
+                bs4ValueBoxOutput("sites_dl_on", width=3),
+                bs4ValueBoxOutput("wastd_dl_on", width=3),
+                bs4ValueBoxOutput("w2_dl_on", width=3),
                 type = "group"
               )
             ),
             fluidRow(
               bs4Card(
                 leaflet::leafletOutput("wastd_map"),
-                title="All WAStD data",
-                # footer = "footer",
-                width = 6,
-                maximisable=TRUE,
+                title = "All WAStD data",
+                # footer= "footer",
+                width = 12,
+                maximizable = TRUE,
                 # label = "label",
-                id="box_all_wastd_data"
-              ),
-              bs4Card(
-                # table or figure
-                title="Total emergences: Processed and missed",
-                footer = "coming soon",
-                width = 6,
-                maximisable=TRUE,
-                # label = "label",
-                id="box_total_emergences"
-              ),
+                id = "box_all_wastd_data"
+              )
             ),
             fluidRow(
-              bs4Card(
-                # leaflet::leafletOutput("wastd_map"),
-                title="Processed turtles: New, resightings, remigrants",
-                footer = "coming soon",
-                width = 6,
-                maximisable=TRUE,
-                # label = "label",
-                id="box_new_resightings_remigrants"
-              ),
-              bs4Card(
-                # table or figure
-                title="Total emergences: Nesting success",
-                footer = "coming soon",
-                width = 6,
-                maximisable=TRUE,
-                # label = "label",
-                id="box_nesting_success"
-              ),
+              tabBox(
+                tabPanel(
+                  title = "Total emergences",
+                  # reactable::reactableOutput("tbl_total_emergences_proc_mis")
+                  # shiny::plotOutput("plt_total_emergences_proc_mis")
+                  icon = icon("arrow-up")
+                ),
+                tabPanel(
+                  title = "Processed turtles",
+                  # reactable::reactableOutput("tbl_processed_turtles_new_res_rem")
+                  # shiny::plotOutput("plt_processed_turtles_new_res_rem")
+                  icon = icon("eye")
+                ),
+                tabPanel(
+                  title = "Nesting success",
+                  # reactable::reactableOutput("tbl_nesting_success")
+                  # shiny::plotOutput("plt_nesting_success")
+                  icon = icon("thumbs-up")
+                ),
+                width = 12,
+                maximizable = TRUE
+              )
             )
           ),
           tabItem(
@@ -154,11 +159,38 @@ app_ui <- function(request) {
           ),
           tabItem(
             tabName = "tab_w2_places",
-            leaflet::leafletOutput("w2_places_map"),
-            shiny::tags$h3("Located W2 places"),
-            reactable::reactableOutput("located_places"),
-            shiny::tags$h3("Homeless W2 places"),
-            reactable::reactableOutput("homeless_places")
+            boxLayout(
+                bs4ValueBoxOutput("vb_place_loc_rate", width=3),
+                bs4ValueBoxOutput("vb_place_homeless_rate", width=3),
+                type = "group"
+            ),
+            fluidRow(
+              bs4Card(
+                leaflet::leafletOutput("w2_places_map"),
+                title = "WAMTRAM places and WAStD sites",
+                # footer= "footer",
+                width = 12,
+                maximizable = TRUE,
+                # label = "label",
+                id = "box_w2_places_map"
+              )
+            ),
+            fluidRow(
+              tabBox(
+                tabPanel(
+                  title = "W2 places located in WAStD",
+                  reactable::reactableOutput("located_places"),
+                  icon = icon("map-location")
+                ),
+                tabPanel(
+                  title = "W2 places without coords",
+                  reactable::reactableOutput("homeless_places"),
+                  icon = icon("location")
+                ),
+                width = 12,
+                maximizable = TRUE
+              )
+            )
           ),
           tabItem(
             tabName = "tab_w2_observations",
