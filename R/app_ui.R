@@ -98,13 +98,13 @@ app_ui <- function(request) {
             tabName = "tab_turtle_nesting",
             fluidRow(
               boxLayout(
-                bs4ValueBoxOutput("vb_total_emergences", width=3),
-                bs4ValueBoxOutput("vb_proc_mis", width=3),
-                bs4ValueBoxOutput("vb_new_res_rem", width=3),
-                bs4ValueBoxOutput("vb_nesting_success", width=3),
-                bs4ValueBoxOutput("sites_dl_on", width=3),
-                bs4ValueBoxOutput("wastd_dl_on", width=3),
-                bs4ValueBoxOutput("w2_dl_on", width=3),
+                bs4ValueBoxOutput("vb_total_emergences", width = 3),
+                bs4ValueBoxOutput("vb_proc_mis", width = 3),
+                bs4ValueBoxOutput("vb_new_res_rem", width = 3),
+                bs4ValueBoxOutput("vb_nesting_success", width = 3),
+                bs4ValueBoxOutput("sites_dl_on", width = 3),
+                bs4ValueBoxOutput("wastd_dl_on", width = 3),
+                bs4ValueBoxOutput("w2_dl_on", width = 3),
                 type = "group"
               )
             ),
@@ -161,9 +161,9 @@ app_ui <- function(request) {
           tabItem(
             tabName = "tab_w2_places",
             boxLayout(
-                bs4ValueBoxOutput("vb_place_loc_rate", width=3),
-                bs4ValueBoxOutput("vb_place_homeless_rate", width=3),
-                type = "group"
+              bs4ValueBoxOutput("vb_place_loc_rate", width = 3),
+              bs4ValueBoxOutput("vb_place_homeless_rate", width = 3),
+              type = "group"
             ),
             fluidRow(
               bs4Card(
@@ -181,12 +181,12 @@ app_ui <- function(request) {
                 tabPanel(
                   title = "W2 places located in WAStD",
                   reactable::reactableOutput("located_places"),
-                  icon = icon("map-location")
+                  icon = icon("map")
                 ),
                 tabPanel(
                   title = "W2 places without coords",
                   reactable::reactableOutput("homeless_places"),
-                  icon = icon("location")
+                  icon = icon("marker")
                 ),
                 width = 12,
                 maximizable = TRUE
@@ -195,10 +195,30 @@ app_ui <- function(request) {
           ),
           tabItem(
             tabName = "tab_w2_observations",
-            shiny::tags$h3("Impossible coordinates"),
-            reactable::reactableOutput("impossible_coords"),
-            shiny::tags$h3("Unlikely coordinates"),
-            reactable::reactableOutput("unlikely_coords")
+            fluidRow(
+              # uiOutput("flt_w2_data_loc"),
+              uiOutput("flt_w2_data_plc"),
+              uiOutput("flt_w2_data_obs")
+            ),
+            bs4Card(
+              leaflet::leafletOutput("map_w2_obs")
+            ),
+            fluidRow(
+              tabBox(
+                tabPanel(
+                  title = "Impossible W2 coordinates",
+                  reactable::reactableOutput("impossible_coords"),
+                  icon = icon("exclamation")
+                ),
+                tabPanel(
+                  title = "Unlikely W2 coordinates",
+                  reactable::reactableOutput("unlikely_coords"),
+                  icon = icon("question")
+                ),
+                width = 12,
+                maximizable = TRUE
+              )
+            )
           )
         ) # /tabItems
       ),

@@ -31,7 +31,10 @@ Imports:
     geojsonio, 
     geojsonsf, 
     odbc, 
-    DBI
+    DBI,
+    fs, 
+    lubridate, 
+    waiter
 Suggests: 
     spelling,
     testthat (>= 3.0.0)

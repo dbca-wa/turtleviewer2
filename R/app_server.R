@@ -170,6 +170,7 @@ app_server <- function(input, output, session) {
   # })
 
   # Processed data ------------------------------------------------------------#
+  # WAMTRAM Locations and places with selectize inputs
   locations <- reactive({
     req(w2_data())
     c("", sort(unique(w2_data()$enc$location_code)))
@@ -179,6 +180,20 @@ app_server <- function(input, output, session) {
     req(w2_data())
       c("", sort(unique(w2_data()$enc$place_code)))
 
+  })
+
+  output$flt_w2_data_loc <- renderUI({
+    req(locations())
+    selectInput("w2_loc", label = "W2 Location:", choices = locations())
+  })
+
+  output$flt_w2_data_plc <- renderUI({
+    req(places())
+    selectInput("w2_plc", label = "W2 Place:", choices = places())
+  })
+
+  output$flt_w2_data_obs <- renderUI({
+    textInput("w2_oid", label = "Observation ID:", value = "")
   })
 
   # sites_by_pc <- reactive({
@@ -430,6 +445,19 @@ app_server <- function(input, output, session) {
   })
 
   # W2 Observations -----------------------------------------------------------#
+  output$map_w2_obs <- leaflet::renderLeaflet({
+    req(w2_data())
+
+    wastdr::map_wamtram(
+      w2_data(),
+      location = input$w2_loc,
+      place = input$w2_plc,
+      obs_id = input$w2_oid,
+      wa_sites = wastd_sites()$sites
+      # l_height="calc(100vh - 80px)"
+    )
+  })
+
   output$impossible_coords <- reactable::renderReactable({
     req(invalid_coords())
     reactable::reactable(
