@@ -93,6 +93,7 @@ app_ui <- function(request) {
         )
       ),
       body = dashboardBody(
+        waiter::autoWaiter(),
         tabItems(
           tabItem(
             tabName = "tab_turtle_nesting",
