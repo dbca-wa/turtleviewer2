@@ -50,7 +50,12 @@ app_server <- function(input, output, session) {
   }
 
   # Manual data download ------------------------------------------------------#
+  waitress_wastd_sites <- waiter::Waitress$new("#sites_dl_on", theme = "overlay", infinite = TRUE)
+  waitress_wastd_data <- waiter::Waitress$new("#wastd_dl_on", theme = "overlay", infinite = TRUE)
+  waitress_w2_data <- waiter::Waitress$new("#w2_dl_on", theme = "overlay", infinite = TRUE)
+
   observeEvent(input$action_dl_wastd_sites, {
+    waitress_wastd_sites$start()
     toast(
       title = "Updating WAStD sites",
       body = "This will take a few seconds...",
@@ -63,9 +68,11 @@ app_server <- function(input, output, session) {
       body = "Reloading ...",
       options = list(autohide = TRUE, icon = "fas fa-tick", class="success")
     )
+    waitress_wastd_sites$close()
   })
 
   observeEvent(input$action_dl_wastd_data, {
+    waitress_wastd_data$start()
     "Downloading WAStD Data" %>% wastdr::wastdr_msg_info()
     toast(
       title = "Updating WAStD data",
@@ -81,9 +88,11 @@ app_server <- function(input, output, session) {
       options = list(autohide = TRUE, icon = "fas fa-tick", class="success")
     )
     "Finished downloading WAStD Data" %>% wastdr::wastdr_msg_success()
+    waitress_wastd_data$close()
   })
 
   observeEvent(input$action_dl_w2_data, {
+    waitress_w2_data$start()
     "Downloading WAMTRAM Data" %>% wastdr::wastdr_msg_info()
     if (wastdr::w2_online() == FALSE) {
       toast(
@@ -108,6 +117,7 @@ app_server <- function(input, output, session) {
           )
           "Finished downloading WAMTRAM Data" %>% wastdr::wastdr_msg_success()
         }
+    waitress_w2_data$close()
   })
 
   # Automatic data download ---------------------------------------------------#

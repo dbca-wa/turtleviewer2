@@ -11,10 +11,11 @@ app_ui <- function(request) {
   tagList(
     # Leave this function for adding external resources
     golem_add_external_resources(),
+    waiter::autoWaiter(),
     dashboardPage(
       fullscreen = TRUE,
       scrollToTop = TRUE,
-      preloader = list(html = waiter::spin_chasing_dots(), color = "#333e48"),
+      # preloader = list(html = waiter::spin_chasing_dots(), color = "#333e48"),
       header = dashboardHeader(
         bs4Dash::actionButton(
           "action_dl_wastd_sites",
@@ -93,7 +94,7 @@ app_ui <- function(request) {
         )
       ),
       body = dashboardBody(
-        waiter::autoWaiter(),
+        waiter::useWaitress(),
         tabItems(
           tabItem(
             tabName = "tab_turtle_nesting",
