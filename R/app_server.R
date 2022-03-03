@@ -60,7 +60,7 @@ app_server <- function(input, output, session) {
     saveRDS(sites, file = fn_wastd_sites)
     toast(
       title = "Finished WAStD sites download",
-      subtitle = "Reloading ...",
+      body = "Reloading ...",
       options = list(autohide = TRUE, icon = "fas fa-tick", class="success")
     )
   })
@@ -72,12 +72,12 @@ app_server <- function(input, output, session) {
       body = "This will take a few minutes...",
       options = list(autohide = TRUE, icon = "fas fa-update", class="info")
     )
-    # TODO remove max_records limit used for DEV
-    wastd_data <- wastdr::download_wastd_turtledata(max_records = 1000)
+    # max_records = 1000 limit used for DEV
+    wastd_data <- wastdr::download_wastd_turtledata()
     saveRDS(wastd_data, file = fn_wastd_data)
     toast(
       title = "Finished WAStD data download",
-      subtitle = "Reloading ...",
+      body = "Reloading ...",
       options = list(autohide = TRUE, icon = "fas fa-tick", class="success")
     )
     "Finished downloading WAStD Data" %>% wastdr::wastdr_msg_success()
@@ -88,7 +88,7 @@ app_server <- function(input, output, session) {
     if (wastdr::w2_online() == FALSE) {
       toast(
         title = "WAMTRAM not accessible",
-        body= "WAMTRAM is only accessible from the DBCA intranet with valid credentials.",
+        body = "WAMTRAM is only accessible from the DBCA intranet with valid credentials.",
         options = list(autohide = TRUE, icon = "fas fa-exclamation-triangle")
       )
       "Failed downloading WAStD Data" %>% wastdr::wastdr_msg_warn()
@@ -103,7 +103,7 @@ app_server <- function(input, output, session) {
 
           toast(
             title = "Finished WAMTRAM data download",
-            subtitle = "Reloading ...",
+            body = "Reloading ...",
             options = list(autohide = TRUE, icon = "fas fa-tick", class="success")
           )
           "Finished downloading WAMTRAM Data" %>% wastdr::wastdr_msg_success()
