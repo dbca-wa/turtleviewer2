@@ -132,6 +132,10 @@ app_server <- function(input, output, session) {
   # Issue 1: it runs on session start (wastd data takes ca 40 mins to dl)
   # Issue 2: it resets the UI when done which interrupts the user's workflow
   #
+  # A better approach is to create a separate Docker image to run the
+  # long-running data ETL and download tasks on a scheduled cron job,
+  # and mount the named volume read-write from both running containers.
+  #
   # WAStD sites ---------------------------------------------------------------#
   # expire_wastd_sites <- reactiveTimer(1000 * 60 * 1) # Expire every 1 min
 
@@ -236,6 +240,7 @@ app_server <- function(input, output, session) {
     textInput("w2_oid", label = "Observation ID:", value = "")
   })
 
+  #
   # sites_by_pc <- reactive({
   #   if (is.null(sites)) {NULL} else {
   #     sites() %>% tidyr::separate_rows(w2_place_code)

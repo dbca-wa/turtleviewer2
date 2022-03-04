@@ -146,6 +146,66 @@ app_ui <- function(request) {
                 ),
                 tabPanel(
                   title = "Nesting success",
+                  #
+                  # We calculate the **nesting success** as the fraction of confirmed nests
+                  # (turtles observed laying during tagging plus "successful crawl" turtle
+                  #   tracks with what is believed by the observer to be a nest) over the
+                  # total number of nesting attempts (emergences).
+                  # As nesting success are counted:
+                  #
+                  # * Tagging records with `clutch_completed` status
+                  #
+                  # * "Y" (confirmed completed clutch).
+                  #
+                  # * Tracks with `nest_type`
+                  #
+                  # * "successful-crawl" (believed to be a nest by the observer).
+                  #
+                  # As unknowns are counted:
+                  #
+                  #   * Tagging records with `clutch_completed` status
+                  #
+                  # * "P" (possible clutch, but not certain enough to confirm),
+                  # * "U" (uncertain about clutch), and
+                  # * "D" (did not check).
+                  #
+                  # * Tracks with `nest_type`
+                  #
+                  # * "track-not-assessed" (did not check for nest), and
+                  # * "track-unsure" (checked but unsure).
+                  #
+                  # As non nesting are counted:
+                  #
+                  #   * Tagging records with `clutch_completed` status
+                  #
+                  # * "N" (confirmed no).
+                  #
+                  # * Tracks with `nest_type`
+                  #
+                  # * "false-crawl" (believed not to be a nest by the observer).
+                  #
+                  # When calculating the nesting success as fraction of successful over total nesting,
+                  # we calculate three versions of nesting success.
+                  #
+                  # * The "pessimistic" success rate considers all unknowns as non nesting.
+                  # * The "optimistic" success rate considers all unknowns as successful nesting.
+                  # * The "split" success rate considers exactly half of all unknowns as successful nesting.
+                  #
+                  # Uncertain track count records include cases where the presence of a nest is unsure or not
+                  # checked for. The tagging records cater for a range of unknowns, which again could
+                  # well be successfully completed clutches.
+                  #
+                  # The **data** are biased (both ways) by the observers' individual ability to
+                  # recognize a nest, and the opportunity to observe the clutch up to its successful
+                  # end.
+                  #
+                  # Nesting success measured during night tagging can be assumed to be lowered by
+                  # the disruption through monitoring disturbance.
+                  # * Nesting success (optimistic) = yes + unsure / yes + unsure + no
+                  # * Nesting success is lower during tagging because tagging disrupts nesting
+                  # * Morning surveys of tracks with/without nests don't disturb nesting process, but
+                  #   biased by observer capability to determine nest presence (barring excavation).
+                  #
                   # reactable::reactableOutput("tbl_nesting_success")
                   # shiny::plotOutput("plt_nesting_success")
                   icon = icon("thumbs-up")
@@ -158,6 +218,31 @@ app_ui <- function(request) {
           tabItem(
             tabName = "tab_turtle_hatching",
             shiny::tags$h3("Hatching and emergence success")
+            # fluidRow(
+            #   boxLayout(
+            #     # bs4ValueBoxOutput("vb_hs", width = 3),
+            #     # bs4ValueBoxOutput("vb_es", width = 3),
+            #     type = "group"
+            #   )
+            # ),
+            # fluidRow(
+              # tabBox(
+              #   tabPanel(
+              #     title = "Hatching and Emergence Success",
+              #     # shiny::plotOutput("")
+              #     # reactable::reactableOutput("")
+              #     icon = icon("table")
+              #   ),
+              #   # tabPanel(
+              #   #   title = "Hatching and Emergence Success timeseries",
+              #   #   # reactable::reactableOutput("")
+              #   #   # shiny::plotOutput("")
+              #   #   icon = icon("chart-area")
+              #   # ),
+              #   width = 12,
+              #   maximizable = TRUE
+              # )
+            # )
           ),
           tabItem(
             tabName = "tab_disturbance",
@@ -262,7 +347,7 @@ golem_add_external_resources <- function() {
 
   tags$head(
     favicon(),
-    bundle_resources(path = app_sys("app/www"), app_title = "turtleviewer2")
+    bundle_resources(path = app_sys("app/www"), app_title = "WA Turtle Data")
     # Add here other external resources
     # for example, you can add shinyalert::useShinyalert())
   )
