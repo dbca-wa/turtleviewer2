@@ -17,6 +17,7 @@ app_ui <- function(request) {
       scrollToTop = TRUE,
       # preloader = list(html = waiter::spin_chasing_dots(), color = "#333e48"),
       header = dashboardHeader(
+        # Download button: WAStD Sites
         bs4Dash::actionButton(
           "action_dl_wastd_sites",
           "Update WAStD Sites",
@@ -25,6 +26,7 @@ app_ui <- function(request) {
           size = "xs",
           class = "m-1"
         ),
+        # Download button: WAStD Data
         bs4Dash::actionButton(
           "action_dl_wastd_data",
           "Update WAStD Data",
@@ -33,6 +35,7 @@ app_ui <- function(request) {
           size = "xs",
           class = "m-1"
         ),
+        # Download button: WAMTRAM Data
         bs4Dash::actionButton(
           "action_dl_w2_data",
           "Update WAMTRAM data",
@@ -40,6 +43,12 @@ app_ui <- function(request) {
           outline = TRUE,
           size = "xs",
           class = "m-1"
+        ),
+        # Filter: WAStD Localities
+        uiOutput(
+          "flt_wastd",
+          inline=TRUE,
+          class = "btn btn-xs"
         ),
         title = dashboardBrand(
           title = "WA Turtle Data",
@@ -198,20 +207,21 @@ app_ui <- function(request) {
           tabItem(
             tabName = "tab_w2_observations",
             fluidRow(
-            bs4Card(
-              # uiOutput("flt_w2_data_loc"),
-              tags$span(uiOutput("flt_w2_data_plc"), class="m-2"),
-              tags$span(uiOutput("flt_w2_data_obs"), class="m-2"),
-              bs4ValueBoxOutput("vb_w2_plc_lat", width=12),
-              bs4ValueBoxOutput("vb_w2_plc_lon", width=12),
-              width=4
+              bs4Card(
+                # uiOutput("flt_w2_data_loc"),
+                uiOutput("flt_w2_data_plc", class = "m-2"),
+                uiOutput("flt_w2_data_obs", class = "m-2"),
+                bs4ValueBoxOutput("vb_w2_plc_lat", width = 12),
+                bs4ValueBoxOutput("vb_w2_plc_lon", width = 12),
+                width = 4
+              ),
+              bs4Card(
+                title = "WAMTRAM 2 Observations",
+                footer = "Select Place Code or Observation ID to filter data",
+                leaflet::leafletOutput("map_w2_obs"),
+                width = 8
+              )
             ),
-            bs4Card(
-              title="WAMTRAM 2 Observations",
-              footer="Select Place Code or Observation ID to filter data",
-              leaflet::leafletOutput("map_w2_obs"),
-              width=8
-            )),
             fluidRow(
               tabBox(
                 tabPanel(
