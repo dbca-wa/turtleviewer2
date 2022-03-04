@@ -47,7 +47,7 @@ app_ui <- function(request) {
         # Filter: WAStD Localities
         uiOutput(
           "flt_wastd",
-          inline=TRUE,
+          inline = TRUE,
           class = "btn btn-xs"
         ),
         title = dashboardBrand(
