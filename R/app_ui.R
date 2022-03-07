@@ -119,6 +119,7 @@ app_ui <- function(request) {
                 type = "group"
               )
             ),
+            # WAStD Data Map --------------------------------------------------#
             fluidRow(
               bs4Card(
                 leaflet::leafletOutput("wastd_map"),
@@ -129,7 +130,7 @@ app_ui <- function(request) {
                 # label = "label",
                 id = "box_all_wastd_data"
               )
-            ),
+            ), #---------------------------------------------------------------#
             fluidRow(
               tabBox(
                 tabPanel(

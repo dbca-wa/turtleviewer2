@@ -39,8 +39,14 @@ app_server <- function(input, output, session) {
   # Filtered by WAStD Area from select input or URL param "site"
   wastd_data <- reactive({
     req(wastd_data_all())
-    wastd_data_all() %>%
-      wastdr::filter_wastd_turtledata(input$sel_wastd_area)
+    req(input$sel_wastd_area)
+
+    if (input$sel_wastd_area == "Select a program") {
+      return(NULL)
+    } else {
+      wastd_data_all() %>%
+        wastdr::filter_wastd_turtledata(input$sel_wastd_area)
+    }
   })
 
   # WAMTRAM data cross session file reader
@@ -68,8 +74,7 @@ app_server <- function(input, output, session) {
       body = "This will take a few seconds...",
       options = list(autohide = TRUE, icon = "fas fa-update", class = "info")
     )
-    sites <- wastdr::download_wastd_sites()
-    saveRDS(sites, file = fn_wastd_sites)
+    wastdr::download_wastd_sites(save=fn_wastd_sites, compress=FALSE)
     toast(
       title = "Finished WAStD sites download",
       body = "Reloading ...",
@@ -87,8 +92,7 @@ app_server <- function(input, output, session) {
       options = list(autohide = TRUE, icon = "fas fa-update", class = "info")
     )
     # max_records = 1000 limit used for DEV
-    wastd_data <- wastdr::download_wastd_turtledata()
-    saveRDS(wastd_data, file = fn_wastd_data)
+    wastdr::download_wastd_turtledata(save=fn_wastd_data, compress=FALSE)
     toast(
       title = "Finished WAStD data download",
       body = "Reloading ...",
@@ -115,7 +119,7 @@ app_server <- function(input, output, session) {
         options = list(autohide = TRUE, icon = "fas fa-update", class = "warning")
       )
 
-      w2_data <- wastdr::download_w2_data(save = fn_w2_data)
+      wastdr::download_w2_data(save = fn_w2_data, compress=FALSE)
 
       toast(
         title = "Finished WAMTRAM data download",
@@ -206,8 +210,9 @@ app_server <- function(input, output, session) {
       "sel_wastd_area",
       label = NULL,
       choices = c(
-        "All turtle programs",
+        "Select a program",
         wastd_data_all()$areas$area_name,
+        "All turtle programs",
         "Other"
       )
     )

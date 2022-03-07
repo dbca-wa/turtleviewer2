@@ -31,7 +31,7 @@ devtools::build()
 golem::add_dockerfile(from="rocker/geospatial:4.1.2")
 
 # replace in Dockerfile:
-# RUN apt-get update && apt-get install -y  gdal-bin git-core freetds-dev tdsodbc libcurl4-openssl-dev libgdal-dev libgeos-dev libgeos++-dev libgit2-dev libicu-dev libjq-dev libpng-dev libproj-dev libprotobuf-dev libssl-dev libudunits2-dev libv8-dev libxml2-dev make pandoc pandoc-citeproc protobuf-compiler libprotoc-dev unixodbc-dev zlib1g-dev && rm -rf /var/lib/apt/lists/*
+# RUN apt-get update && apt-get install -y cron freetds-dev tdsodbc gdal-bin git-core libcurl4-openssl-dev libgdal-dev libgeos-dev libgeos++-dev libgit2-dev libicu-dev libjq-dev libpng-dev libproj-dev libprotobuf-dev libssl-dev libudunits2-dev libv8-dev libxml2-dev make pandoc pandoc-citeproc protobuf-compiler libprotoc-dev unixodbc-dev zlib1g-dev && rm -rf /var/lib/apt/lists/*
 #  ...
 # RUN Rscript -e 'remotes::install_github("r-spatial/sf")'
 # RUN Rscript -e 'remotes::install_github("Thinkr-open/golem")'
