@@ -24,8 +24,31 @@ knitr::opts_chunk$set(
 Interactive turtle data preview for QA and analysis hosted at 
 <https://turtledata.dbca.wa.gov.au/> for DBCA staff.
 
+## Quickstart
+* Open <https://turtledata.dbca.wa.gov.au/>, wait for data to load.
+* Select an area of interest. 
+  You can bookmark your selection by appending `?site=Site Name`, e.g. 
+  * Delambre <https://turtledata.dbca.wa.gov.au/?site=Delambre%20Island>
+  * Thevenard <https://turtledata.dbca.wa.gov.au/?site=Thevenard%20Island>
+* Maps have a full-screen button and can toggle layers on and off. Individual 
+  markers are clustered for performance - click clusters or zoom in to expand them.
+  Individual markers have popups with links to the original record on WAStD.
+* (In development) A download button will generate a ZIP archive of all data
+  currently shown. This replaces data dissemination via SharePoint.
+  If you need fresh data, come and get it here.
+
 ## Architecture
-Data shapshots are locally saved as an `.rds` file for WAStD data, WAMTRAM data, 
+This section is for developers.
+
+This Shiny app is based on [bs4Dash](https://rinterface.github.io/bs4Dash/index.html) 
+and was initially created from a [Golem](https://thinkr-open.github.io/golem/) template.
+
+The main mechanism is to read snapshots of two fairly complex production databases
+and visualise the data through maps, figures, and summaries.
+The user can select areas of interest (mostly turtle monitoring program areas)
+and download the data for that area.
+
+Data snapshots are locally saved as an `.rds` file for WAStD data, WAMTRAM data, 
 and WAStD sites. 
 The app accesses these snapshots through file paths relative to its working directory, e.g. `here:here("inst/wastd_site.rds")`.
 
@@ -36,14 +59,20 @@ In production, the `WORKDIR` is defined as `/app` in the Dockerfile, and
 data snapshots are written to `/app/inst` in the running container.
 
 To persist the data snapshots, a volume should be mounted to the internal path
-`/app/inst`. 
+`/app/inst`.
+
+A second Docker image (dbca-wa/etlturtlenesting) runs the ETL jobs to 
+periodically refresh the data snapshots from the production databases.
+The ETL process takes close to an hour, the saved snapshots read in seconds.
 
 ## Development
-* Write code, add tests where needed
-* Update dependencies from code: `attachment::att_amend_desc()` (careful: drops unused Imports)
-* Update Dockerfile from dependencies: `golem::add_dockerfile(from="rocker/geospatial:4.1.2")`
-  (careful: rotate existing Dockerfile to Dockerfile_old to keep manual edits)
-* Build Docker image for local testing: `system("docker build . -t dbca-wa/turtleviewer2:latest")`
+* Write code, add tests where needed.
+* Update dependencies from code: `attachment::att_amend_desc()` 
+  (careful: drops unused Imports).
+* Update Dockerfile from dependencies: initially generated through
+  `golem::add_dockerfile(from="rocker/geospatial:4.1.2")`.
+  Note: rotate existing Dockerfile to Dockerfile_old to keep manual edits.
+* Build Docker image for local testing (see below).
 * Run e.g. through [Portainer](https://www.portainer.io) with 
   * Name: e.g. "tv"
   * Image: advanced mode, `dbca-wa/turtleviewer2:latest`
@@ -54,27 +83,57 @@ To persist the data snapshots, a volume should be mounted to the internal path
   * env: paste environment variables from your .env (warning: sensitive credentials).
     A template is given at `inst/.env.template`.
 * If the Docker image does not work, inspect the docker logs, 
-  or debug with `docker run -it dbca-wa/turtleviewer2:latest /bin/bash -c "export TERM=xterm; exec bash"`.
+  or debug through the Docker shell.
   The console runs inside the Docker container, bypassing the Shiny app.
   There, you can run R and test whether all libraries (especially `turtleviewer2`)
   load successfully.
 * If the app as well as the Docker image work, commit and push.
 
+Run the app locally:
+
+```{r, eval=FALSE, warning=FALSE}
+golem::detach_all_attached()
+golem::document_and_reload()
+run_app()
+```
+
+Build Docker image for local testing:
+
+```{bash, eval=FALSE}
+docker build . -t dbca-wa/turtleviewer2:latest
+```
+
+Inspect the locally built image for debugging:
+```{bash, eval=FALSE}
+docker run -it dbca-wa/turtleviewer2:latest /bin/bash -c "export TERM=xterm; exec bash"
+```
 
 ## Deployment
 Once app and Docker image work, create a new version, tag, and push the tag.
-```
+
+```{r, eval=FALSE}
 # One of these (R console)
 usethis::use_version(which="patch")
 usethis::use_version(which="minor")
 usethis::use_version(which="major")
 
-# Create a git tag (terminal) - use the current version
-git tag -a 'v0.0.1' -m 'v0.0.1'
-git push --tags
+styler::style_pkg()
+spelling::spell_check_package()
+spelling::update_wordlist()
+
+# Code and docs tested, working, committed
+usethis::use_version()
+usethis::edit_file("NEWS.md")
+
+# Git commit, then tag and push
+v <- packageVersion("turtleviewer2")
+system(glue::glue("git tag -a v{v} -m 'v{v}'"))
+system(glue::glue("git push origin v{v}"))
 ```
 
-Pushing a new tag will build and publish a new Docker image to the GitHub container registry.
+Pushing a new tag will trigger a GitHub Action to build a new 
+Docker image and publish it to the GitHub container registry.
 
-In the Rancher console, edit the "turtleviewer" workload and update the image
-to the latest tag.
+In the Rancher console to the BCS Kubernetes cluster, 
+edit the "turtleviewer2" workload and update the image to the latest tag.
+This action could be automated through the k3s

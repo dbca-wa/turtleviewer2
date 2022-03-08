@@ -18,7 +18,7 @@ app_ui <- function(request) {
       # preloader = list(html = waiter::spin_chasing_dots(), color = "#333e48"),
       header = dashboardHeader(
         # Download button: WAStD Sites
-        actionButton(
+        bs4Dash::actionButton(
           "action_dl_wastd_sites",
           "Update WAStD Sites",
           status = "primary",
@@ -27,7 +27,7 @@ app_ui <- function(request) {
           class = "m-1"
         ),
         # Download button: WAStD Data
-        actionButton(
+        bs4Dash::actionButton(
           "action_dl_wastd_data",
           "Update WAStD Data",
           status = "primary",
@@ -36,7 +36,7 @@ app_ui <- function(request) {
           class = "m-1"
         ),
         # Download button: WAMTRAM Data
-        actionButton(
+        bs4Dash::actionButton(
           "action_dl_w2_data",
           "Update WAMTRAM data",
           status = "primary",
@@ -227,22 +227,22 @@ app_ui <- function(request) {
             #   )
             # ),
             # fluidRow(
-              # tabBox(
-              #   tabPanel(
-              #     title = "Hatching and Emergence Success",
-              #     # shiny::plotOutput("")
-              #     # reactable::reactableOutput("")
-              #     icon = icon("table")
-              #   ),
-              #   # tabPanel(
-              #   #   title = "Hatching and Emergence Success timeseries",
-              #   #   # reactable::reactableOutput("")
-              #   #   # shiny::plotOutput("")
-              #   #   icon = icon("chart-area")
-              #   # ),
-              #   width = 12,
-              #   maximizable = TRUE
-              # )
+            # tabBox(
+            #   tabPanel(
+            #     title = "Hatching and Emergence Success",
+            #     # shiny::plotOutput("")
+            #     # reactable::reactableOutput("")
+            #     icon = icon("table")
+            #   ),
+            #   # tabPanel(
+            #   #   title = "Hatching and Emergence Success timeseries",
+            #   #   # reactable::reactableOutput("")
+            #   #   # shiny::plotOutput("")
+            #   #   icon = icon("chart-area")
+            #   # ),
+            #   width = 12,
+            #   maximizable = TRUE
+            # )
             # )
           ),
           tabItem(

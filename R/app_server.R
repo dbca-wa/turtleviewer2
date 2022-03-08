@@ -74,7 +74,7 @@ app_server <- function(input, output, session) {
       body = "This will take a few seconds...",
       options = list(autohide = TRUE, icon = "fas fa-update", class = "info")
     )
-    wastdr::download_wastd_sites(save=fn_wastd_sites, compress=FALSE)
+    wastdr::download_wastd_sites(save = fn_wastd_sites, compress = FALSE)
     toast(
       title = "Finished WAStD sites download",
       body = "Reloading ...",
@@ -92,7 +92,7 @@ app_server <- function(input, output, session) {
       options = list(autohide = TRUE, icon = "fas fa-update", class = "info")
     )
     # max_records = 1000 limit used for DEV
-    wastdr::download_wastd_turtledata(save=fn_wastd_data, compress=FALSE)
+    wastdr::download_wastd_turtledata(save = fn_wastd_data, compress = FALSE)
     toast(
       title = "Finished WAStD data download",
       body = "Reloading ...",
@@ -119,7 +119,7 @@ app_server <- function(input, output, session) {
         options = list(autohide = TRUE, icon = "fas fa-update", class = "warning")
       )
 
-      wastdr::download_w2_data(save = fn_w2_data, compress=FALSE)
+      wastdr::download_w2_data(save = fn_w2_data, compress = FALSE)
 
       toast(
         title = "Finished WAMTRAM data download",
@@ -400,7 +400,7 @@ app_server <- function(input, output, session) {
     req(wastd_data_all())
     bs4ValueBox(
       value = tags$h4(wastd_data_all()$downloaded_on %>%
-                        lubridate::with_tz("Australia/Perth")),
+        lubridate::with_tz("Australia/Perth")),
       subtitle = "WAStD data downloaded",
       color = "navy",
       gradient = TRUE,
