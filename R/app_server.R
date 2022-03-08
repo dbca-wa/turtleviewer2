@@ -3,8 +3,8 @@
 #' @param input,output,session Internal parameters for {shiny}.
 #'     DO NOT REMOVE.
 #' @import shiny
-#' @import wastdr
 #' @import bs4Dash
+#' @import wastdr
 #' @noRd
 app_server <- function(input, output, session) {
 
@@ -384,9 +384,10 @@ app_server <- function(input, output, session) {
   })
 
   output$wastd_dl_on <- renderbs4ValueBox({
-    req(wastd_data())
+    req(wastd_data_all())
     bs4ValueBox(
-      value = tags$h4(wastd_data()$downloaded_on %>% lubridate::with_tz("Australia/Perth")),
+      value = tags$h4(wastd_data_all()$downloaded_on %>%
+                        lubridate::with_tz("Australia/Perth")),
       subtitle = "WAStD data downloaded",
       color = "navy",
       gradient = TRUE,
@@ -462,7 +463,7 @@ app_server <- function(input, output, session) {
     req(w2_data())
 
     wastdr::map_wastd_wamtram_sites(
-      wastd_sites()$localities, wastd_sites()$sites, w2_data()$sites
+      wastd_sites()$localities, wastd_sites()$sites, wastd_sites()$sites
     )
   })
 
