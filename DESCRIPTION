@@ -16,25 +16,25 @@ Depends:
 Imports: 
     bs4Dash (>= 0.5.0),
     config (>= 0.3.1),
+    DBI,
     dplyr,
+    fs, 
+    geojsonio, 
+    geojsonsf, 
     glue,
     golem (>= 0.3.2),
     here,
+    lubridate, 
     janitor,
     leaflet (>= 2.0.4.1),
     leaflet.extras (>= 1.0.0),
+    odbc, 
     reactable,
     sf (>= 1.0-7),
     shiny (>= 1.7.1),
     tidyr,
+    waiter,
     wastdr (>= 0.8.8),
-    geojsonio, 
-    geojsonsf, 
-    odbc, 
-    DBI,
-    fs, 
-    lubridate, 
-    waiter
 Suggests: 
     spelling,
     testthat (>= 3.0.0)
@@ -45,4 +45,5 @@ Config/testthat/edition: 3
 Encoding: UTF-8
 Language: en-US
 LazyData: true
+Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
