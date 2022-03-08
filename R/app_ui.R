@@ -2,13 +2,13 @@
 #'
 #' @param request Internal parameter for `{shiny}`.
 #'     DO NOT REMOVE.
-#' @import bs4Dash
 #' @import shiny
+#' @import bs4Dash
 #' @noRd
 app_ui <- function(request) {
   golem::favicon("www/favicon.ico")
 
-  tagList(
+  shiny::tagList(
     # Leave this function for adding external resources
     golem_add_external_resources(),
     waiter::autoWaiter(),
@@ -18,7 +18,7 @@ app_ui <- function(request) {
       # preloader = list(html = waiter::spin_chasing_dots(), color = "#333e48"),
       header = dashboardHeader(
         # Download button: WAStD Sites
-        bs4Dash::actionButton(
+        actionButton(
           "action_dl_wastd_sites",
           "Update WAStD Sites",
           status = "primary",
@@ -27,7 +27,7 @@ app_ui <- function(request) {
           class = "m-1"
         ),
         # Download button: WAStD Data
-        bs4Dash::actionButton(
+        actionButton(
           "action_dl_wastd_data",
           "Update WAStD Data",
           status = "primary",
@@ -36,7 +36,7 @@ app_ui <- function(request) {
           class = "m-1"
         ),
         # Download button: WAMTRAM Data
-        bs4Dash::actionButton(
+        actionButton(
           "action_dl_w2_data",
           "Update WAMTRAM data",
           status = "primary",
