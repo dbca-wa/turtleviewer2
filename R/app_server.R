@@ -339,8 +339,21 @@ app_server <- function(input, output, session) {
   # Outputs -------------------------------------------------------------------#
   #
   output$wastd_map <- leaflet::renderLeaflet({
-    req(wastd_data())
-    wastdr::map_wastd(wastd_data(), cluster = TRUE)
+    if (is.null(wastd_data())) {
+      leaflet::leaflet() %>%
+        leaflet::addProviderTiles("Esri.WorldImagery", group = "Basemap") %>%
+        leaflet::addProviderTiles(
+          "OpenStreetMap.Mapnik",
+          group = "Basemap",
+          options = leaflet::providerTileOptions(opacity = 0.35)
+        ) %>%
+        leaflet.extras::addFullscreenControl(pseudoFullscreen = TRUE) %>%
+        leaflet::addScaleBar(position = "bottomleft") %>%
+        leaflet::setView(130, -20, 5)
+    } else {
+      req(wastd_data())
+      wastdr::map_wastd(wastd_data(), cluster = TRUE)
+    }
   })
 
   output$vb_total_emergences <- renderbs4ValueBox({
