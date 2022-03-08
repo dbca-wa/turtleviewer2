@@ -463,7 +463,9 @@ app_server <- function(input, output, session) {
     req(w2_data())
 
     wastdr::map_wastd_wamtram_sites(
-      wastd_sites()$localities, wastd_sites()$sites, wastd_sites()$sites
+      wastd_sites()$areas,
+      wastd_sites()$sites,
+      w2_data()$sites
     )
   })
 
