@@ -38,13 +38,12 @@ app_server <- function(input, output, session) {
 
   # Filtered by WAStD Area from select input or URL param "site"
   wastd_data <- reactive({
-    req(wastd_data_all())
     req(input$sel_wastd_area)
 
     if (input$sel_wastd_area == "Select a program") {
       return(NULL)
     } else {
-      wastd_data_all() %>%
+      req(wastd_data_all()) %>%
         wastdr::filter_wastd_turtledata(input$sel_wastd_area)
     }
   })
@@ -205,13 +204,12 @@ app_server <- function(input, output, session) {
   #
   # WAStD Localities
   output$flt_wastd <- renderUI({
-    req(wastd_data_all())
     selectInput(
       "sel_wastd_area",
       label = NULL,
       choices = c(
         "Select a program",
-        wastd_data_all()$areas$area_name,
+        req(wastd_data_all())$areas$area_name,
         "All turtle programs",
         "Other"
       )
@@ -228,17 +226,15 @@ app_server <- function(input, output, session) {
 
   # WAMTRAM select Locations, Places, enter ObsID
   output$flt_w2_data_loc <- renderUI({
-    req(w2_data())
     selectInput(
       "w2_loc",
       label = "W2 Location:",
-      choices = c("", sort(unique(w2_data()$enc$location_code)))
+      choices = c("", sort(unique(req(w2_data())$enc$location_code)))
     )
   })
 
   output$flt_w2_data_plc <- renderUI({
-    req(w2_data())
-    selectInput("w2_plc", label = "W2 Place:", choices = c("", sort(unique(w2_data()$enc$place_code))))
+    selectInput("w2_plc", label = "W2 Place:", choices = c("", sort(unique(req(w2_data())$enc$place_code))))
   })
 
   output$flt_w2_data_obs <- renderUI({
@@ -253,18 +249,14 @@ app_server <- function(input, output, session) {
   # })
 
   enc_by_sites <- reactive({
-    req(w2_data())
-    w2_data()$enc %>%
+    req(w2_data())$enc %>%
       dplyr::group_by(place_code) %>%
       dplyr::tally(name = "observations") %>%
       dplyr::ungroup()
   })
 
   homeless_places <- reactive({
-    req(w2_data())
-    req(enc_by_sites())
-
-    w2_data()$sites %>%
+    req(w2_data())$sites %>%
       dplyr::filter(is.na(site_latitude)) %>%
       dplyr::mutate(
         search_areas_at = glue::glue(
@@ -274,16 +266,14 @@ app_server <- function(input, output, session) {
         .before = code
       ) %>%
       dplyr::select(-site_datum, site_longitude, site_latitude) %>%
-      dplyr::left_join(enc_by_sites(), by = c("code" = "place_code")) %>%
+      dplyr::left_join(req(enc_by_sites()), by = c("code" = "place_code")) %>%
       dplyr::filter(observations > 0) %>%
       dplyr::arrange(-observations) %>%
       janitor::clean_names(case = "title")
   })
 
   located_places <- reactive({
-    req(w2_data())
-    req(enc_by_sites())
-    w2_data()$sites %>%
+    req(w2_data())$sites %>%
       dplyr::filter(!is.na(site_latitude)) %>%
       dplyr::mutate(
         search_areas_at = glue::glue(
@@ -294,15 +284,14 @@ app_server <- function(input, output, session) {
       ) %>%
       dplyr::select(-site_datum, site_longitude, site_latitude) %>%
       # dplyr::left_join(sites_by_pc, by=c("code"="w2_location_code")) %>%
-      dplyr::left_join(enc_by_sites(), by = c("code" = "place_code")) %>%
+      dplyr::left_join(req(enc_by_sites()), by = c("code" = "place_code")) %>%
       dplyr::filter(observations > 0) %>%
       dplyr::arrange(-observations) %>%
       janitor::clean_names(case = "title")
   })
 
   invalid_coords <- reactive({
-    req(w2_data())
-    w2_data()$enc %>%
+    req(w2_data())$enc %>%
       dplyr::filter(
         longitude < -180 |
           longitude > 180 |
@@ -314,8 +303,7 @@ app_server <- function(input, output, session) {
   })
 
   unlikely_coords <- reactive({
-    req(w2_data())
-    w2_data()$enc %>%
+    req(w2_data())$enc %>%
       dplyr::filter(
         longitude < 100 |
           longitude > 150 |
@@ -325,15 +313,12 @@ app_server <- function(input, output, session) {
   })
 
   w2_obs_wastd_sites <- reactive({
-    req(w2_data())
-    req(sites())
-
-    w2_data()$enc %>%
+    req(w2_data())$enc %>%
       dplyr::filter(
         longitude > -180, longitude < 180, latitude > -90, latitude < 90
       ) %>%
       sf::st_as_sf(coords = c("longitude", "latitude"), crs = 4326) %>%
-      sf::st_join(sites(), left = TRUE)
+      sf::st_join(req(sites()), left = TRUE)
   })
 
   # Outputs -------------------------------------------------------------------#
@@ -351,8 +336,7 @@ app_server <- function(input, output, session) {
         leaflet::addScaleBar(position = "bottomleft") %>%
         leaflet::setView(130, -20, 5)
     } else {
-      req(wastd_data())
-      wastdr::map_wastd(wastd_data(), cluster = TRUE)
+      wastdr::map_wastd(req(wastd_data()), cluster = TRUE)
     }
   })
 
@@ -397,9 +381,8 @@ app_server <- function(input, output, session) {
   })
 
   output$wastd_dl_on <- renderbs4ValueBox({
-    req(wastd_data_all())
     bs4ValueBox(
-      value = tags$h4(wastd_data_all()$downloaded_on %>%
+      value = tags$h4(req(wastd_data_all())$downloaded_on %>%
         lubridate::with_tz("Australia/Perth")),
       subtitle = "WAStD data downloaded",
       color = "navy",
@@ -409,9 +392,8 @@ app_server <- function(input, output, session) {
   })
 
   output$w2_dl_on <- renderbs4ValueBox({
-    req(w2_data())
     bs4ValueBox(
-      value = tags$h4(w2_data()$downloaded_on %>% lubridate::with_tz("Australia/Perth")),
+      value = tags$h4(req(w2_data())$downloaded_on %>% lubridate::with_tz("Australia/Perth")),
       subtitle = "WAMTRAM data downloaded",
       color = "navy",
       gradient = TRUE,
@@ -420,9 +402,8 @@ app_server <- function(input, output, session) {
   })
 
   output$sites_dl_on <- renderbs4ValueBox({
-    req(wastd_sites())
     bs4ValueBox(
-      value = tags$h4(wastd_sites()$downloaded_on %>% lubridate::with_tz("Australia/Perth")),
+      value = tags$h4(req(wastd_sites())$downloaded_on %>% lubridate::with_tz("Australia/Perth")),
       subtitle = "WAStD Sites downloaded",
       color = "navy",
       gradient = TRUE,
@@ -432,11 +413,7 @@ app_server <- function(input, output, session) {
 
   # W2 Places -----------------------------------------------------------------#
   output$vb_place_loc_rate <- renderbs4ValueBox({
-    req(located_places())
-    req(wastd_sites())
-
-    x <- round(100 * (nrow(located_places()) / nrow(w2_data()$sites)), 0)
-
+    x <- round(100 * (nrow(req(located_places())) / nrow(req(wastd_sites())$sites)), 0)
     bs4ValueBox(
       value = tags$h3(x),
       subtitle = "% W2 places located",
@@ -452,10 +429,7 @@ app_server <- function(input, output, session) {
   })
 
   output$vb_place_homeless_rate <- renderbs4ValueBox({
-    req(homeless_places())
-    req(wastd_sites())
-
-    x <- round(100 * (nrow(homeless_places()) / nrow(w2_data()$sites)), 0)
+    x <- round(100 * (nrow(req(homeless_places())) / nrow(req(wastd_sites())$sites)), 0)
 
     bs4ValueBox(
       value = tags$h3(x),
@@ -472,20 +446,16 @@ app_server <- function(input, output, session) {
   })
 
   output$w2_places_map <- leaflet::renderLeaflet({
-    req(wastd_sites())
-    req(w2_data())
-
     wastdr::map_wastd_wamtram_sites(
-      wastd_sites()$areas,
-      wastd_sites()$sites,
-      w2_data()$sites
+      req(wastd_sites())$areas,
+      req(wastd_sites())$sites,
+      req(w2_data())$sites
     )
   })
 
   output$located_places <- reactable::renderReactable({
-    req(located_places())
     reactable::reactable(
-      located_places(),
+      req(located_places()),
       sortable = TRUE,
       filterable = TRUE,
       searchable = TRUE,
@@ -494,9 +464,8 @@ app_server <- function(input, output, session) {
   })
 
   output$homeless_places <- reactable::renderReactable({
-    req(homeless_places())
     reactable::reactable(
-      homeless_places(),
+      req(homeless_places()),
       sortable = TRUE,
       filterable = TRUE,
       searchable = TRUE,
@@ -504,26 +473,32 @@ app_server <- function(input, output, session) {
     )
   })
 
+  output$homeless_obs <- reactable::renderReactable({
+    reactable::reactable(
+      req(w2_data())$enc_qa,
+      sortable = TRUE,
+      filterable = TRUE,
+      searchable = TRUE,
+      defaultColDef = reactable::colDef(html = TRUE)
+    )
+  })
+
+
   # W2 Observations -----------------------------------------------------------#
   #
   selected_place <- reactive({
-    req(w2_data())
-    req(input$w2_plc)
-    w2_data()$sites %>% dplyr::filter(code == input$w2_plc)
+    req(w2_data())$sites %>% dplyr::filter(code == input$w2_plc)
   })
   output$txt_w2_plc_lat <- renderText({
-    req(selected_place())
-    glue::glue("Lat {round(selected_place()$site_latitude, 5)}")
+    glue::glue("Lat {round(req(selected_place())$site_latitude, 5)}")
   })
   output$txt_w2_plc_lon <- renderText({
-    req(selected_place())
-    glue::glue("Lon {round(selected_place()$site_longitude, 5)}")
+    glue::glue("Lon {round(req(selected_place())$site_longitude, 5)}")
   })
 
   output$vb_w2_plc_lat <- renderbs4ValueBox({
-    req(wastd_sites())
     bs4ValueBox(
-      value = tags$h3(round(selected_place()$site_latitude, 5)),
+      value = tags$h3(round(req(selected_place())$site_latitude, 5)),
       subtitle = "W2 Site Lat",
       color = "navy",
       gradient = TRUE,
@@ -532,9 +507,8 @@ app_server <- function(input, output, session) {
   })
 
   output$vb_w2_plc_lon <- renderbs4ValueBox({
-    req(wastd_sites())
     bs4ValueBox(
-      value = tags$h3(round(selected_place()$site_longitude, 5)),
+      value = tags$h3(round(req(selected_place())$site_longitude, 5)),
       subtitle = "W2 Site Lon",
       color = "navy",
       gradient = TRUE,
@@ -543,23 +517,34 @@ app_server <- function(input, output, session) {
   })
 
   output$map_w2_obs <- leaflet::renderLeaflet({
-    req(w2_data())
-    req(wastd_sites())
-
-    wastdr::map_wamtram(
-      w2_data(),
-      # location = input$w2_loc,
-      place = input$w2_plc,
-      obs_id = input$w2_oid,
-      wa_sites = wastd_sites()$sites
-      # l_height="calc(100vh - 80px)"
-    )
+    if (
+      (!is.na(input$w2_plc) && input$w2_plc != "") | input$w2_oid != ""
+    ) {
+      wastdr::map_wamtram(
+        req(w2_data()),
+        # location = input$w2_loc,
+        place = input$w2_plc,
+        obs_id = input$w2_oid,
+        wa_sites = req(wastd_sites())$sites
+        # l_height="calc(100vh - 80px)"
+      )
+    } else {
+      leaflet::leaflet() %>%
+        leaflet::addProviderTiles("Esri.WorldImagery", group = "Basemap") %>%
+        leaflet::addProviderTiles(
+          "OpenStreetMap.Mapnik",
+          group = "Basemap",
+          options = leaflet::providerTileOptions(opacity = 0.35)
+        ) %>%
+        leaflet.extras::addFullscreenControl(pseudoFullscreen = TRUE) %>%
+        leaflet::addScaleBar(position = "bottomleft") %>%
+        leaflet::setView(130, -20, 5)
+    }
   })
 
   output$impossible_coords <- reactable::renderReactable({
-    req(invalid_coords())
     reactable::reactable(
-      invalid_coords(),
+      req(invalid_coords()),
       sortable = TRUE,
       filterable = TRUE,
       searchable = TRUE,
@@ -568,9 +553,8 @@ app_server <- function(input, output, session) {
   })
 
   output$unlikely_coords <- reactable::renderReactable({
-    req(unlikely_coords())
     reactable::reactable(
-      unlikely_coords(),
+      req(unlikely_coords()),
       sortable = TRUE,
       filterable = TRUE,
       searchable = TRUE,

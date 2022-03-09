@@ -24,7 +24,7 @@ app_ui <- function(request) {
           status = "primary",
           outline = TRUE,
           size = "xs",
-          class = "m-1"
+          class = "btn btn-xs m-1"
         ),
         # Download button: WAStD Data
         bs4Dash::actionButton(
@@ -33,7 +33,7 @@ app_ui <- function(request) {
           status = "primary",
           outline = TRUE,
           size = "xs",
-          class = "m-1"
+          class = "btn btn-xs m-1"
         ),
         # Download button: WAMTRAM Data
         bs4Dash::actionButton(
@@ -42,7 +42,7 @@ app_ui <- function(request) {
           status = "primary",
           outline = TRUE,
           size = "xs",
-          class = "m-1"
+          class = "btn btn-xs m-1"
         ),
         # Filter: WAStD Localities
         uiOutput(
@@ -318,6 +318,11 @@ app_ui <- function(request) {
                 tabPanel(
                   title = "Unlikely W2 coordinates",
                   reactable::reactableOutput("unlikely_coords"),
+                  icon = icon("question")
+                ),
+                tabPanel(
+                  title = "Homeless W2 Observations",
+                  reactable::reactableOutput("homeless_obs"),
                   icon = icon("question")
                 ),
                 width = 12,
