@@ -56,6 +56,15 @@ app_ui <- function(request) {
           href = "https://turtledata.dbca.wa.gov.au/"
           # image = "www/logo.svg"
         )
+        # # Download button: All Data
+        # bs4Dash::actionButton(
+        #   "action_export_data",
+        #   "Download data",
+        #   status = "danger",
+        #   outline = TRUE,
+        #   size = "xs",
+        #   class = "btn btn-xs m-1"
+        # )
       ),
       sidebar = dashboardSidebar(
         sidebarMenu(
@@ -68,6 +77,19 @@ app_ui <- function(request) {
               text = "Turtle Nesting",
               tabName = "tab_turtle_nesting",
               icon = icon("home")
+
+              # absolute numbers or density per km coastline
+              # timeseries, group = species
+              #
+              # total emergences
+              # emergences split by nesting success
+              # emergences split by processing status
+              # emergences split by sighting status: new, resight, remigrant
+              # internesting interval
+              # clutch frequency
+              #
+
+
             ),
             menuSubItem(
               text = "Turtle Hatching",

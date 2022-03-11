@@ -1,4 +1,4 @@
-FROM rocker/geospatial:4.1.2 as base
+FROM rocker/geospatial:4.1.3 as base
 RUN apt-get update && apt-get install -y cron freetds-dev tdsodbc gdal-bin git-core libcurl4-openssl-dev libgdal-dev libgeos-dev libgeos++-dev libgit2-dev libicu-dev libjq-dev libpng-dev libproj-dev libprotobuf-dev libssl-dev libudunits2-dev libv8-dev libxml2-dev make pandoc pandoc-citeproc protobuf-compiler libprotoc-dev unixodbc-dev zlib1g-dev && rm -rf /var/lib/apt/lists/*
 
 FROM base as rlibs
