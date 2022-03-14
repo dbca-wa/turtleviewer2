@@ -132,7 +132,7 @@ usethis::edit_file("NEWS.md")
 # Git commit, then tag and push
 v <- packageVersion("turtleviewer2")
 system(glue::glue("git tag -a v{v} -m 'v{v}'"))
-system(glue::glue("git push --tags"))
+system(glue::glue("git push && git push --tags"))
 ```
 
 Pushing a new tag will trigger a GitHub Action to build a new Docker
