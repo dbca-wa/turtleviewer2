@@ -135,6 +135,8 @@ app_ui <- function(request) {
                 bs4ValueBoxOutput("vb_proc_mis", width = 3),
                 bs4ValueBoxOutput("vb_new_res_rem", width = 3),
                 bs4ValueBoxOutput("vb_nesting_success", width = 3),
+
+                bs4ValueBoxOutput("odk_imported", width = 3),
                 bs4ValueBoxOutput("sites_dl_on", width = 3),
                 bs4ValueBoxOutput("wastd_dl_on", width = 3),
                 bs4ValueBoxOutput("w2_dl_on", width = 3),

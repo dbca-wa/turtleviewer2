@@ -10,8 +10,19 @@ app_server <- function(input, output, session) {
 
   # Data ----------------------------------------------------------------------#
   # WAStD areas cross session file reader
-  # TODO https://stackoverflow.com/a/51108534/2813717
-  fn_wastd_sites <- here::here("inst/wastd_sites.rds")
+  fn_odk <- here::here("inst/odk.txt")
+  odk_imported <- if (!fs::file_exists(fn_odk)) {
+    NULL
+  } else {
+    reactiveFileReader(
+      1000, # Poll data file for changes every 1 second
+      NULL, # across sessions
+      fn_odk, # relative to project or Dockerfile workdir
+      readLines # using function readRDS
+    )
+  }
+
+    fn_wastd_sites <- here::here("inst/wastd_sites.rds")
   wastd_sites <- if (!fs::file_exists(fn_wastd_sites)) {
     NULL
   } else {
@@ -377,6 +388,20 @@ app_server <- function(input, output, session) {
       color = "teal",
       gradient = TRUE,
       icon = icon("thumbs-up")
+    )
+  })
+
+  output$odk_imported <- renderbs4ValueBox({
+    bs4ValueBox(
+      value = tags$h4(
+        req(odk_imported()) %>%
+          lubridate::parse_date_time(orders="ymdHMS")
+        # %>% lubridate::with_tz("Australia/Perth")
+        ),
+      subtitle = "ODK imported to WAStD",
+      color = "navy",
+      gradient = TRUE,
+      icon = icon("download")
     )
   })
 
