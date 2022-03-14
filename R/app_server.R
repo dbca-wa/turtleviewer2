@@ -395,8 +395,8 @@ app_server <- function(input, output, session) {
     bs4ValueBox(
       value = tags$h4(
         req(odk_imported()) %>%
-          lubridate::parse_date_time(orders="ymdHMS")
-        # %>% lubridate::with_tz("Australia/Perth")
+          lubridate::parse_date_time(orders="ymdHMS") %>%
+          lubridate::with_tz("Australia/Perth")
         ),
       subtitle = "ODK imported to WAStD",
       color = "navy",
