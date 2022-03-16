@@ -359,6 +359,12 @@ app_server <- function(input, output, session) {
       nrow()
   })
 
+  nrow_w2_enc_no_sites <- reactive({
+    req(w2_obs_wastd_sites()) %>%
+      dplyr::filter(is.na(site_name)) %>%
+      nrow()
+  })
+
   pct_w2_enc_in_sites <- reactive({
     round(100 * nrow_w2_enc_in_sites() / nrow_w2_enc_total(), 2)
   })
@@ -582,6 +588,17 @@ app_server <- function(input, output, session) {
       icon = icon("pencil-alt")
     )
   })
+
+  output$vb_w2_obs_no_sites <- renderbs4ValueBox({
+    bs4ValueBox(
+      value = tags$h3(req(nrow_w2_enc_no_sites())),
+      subtitle = "Obs outside of sites",
+      color = "warning",
+      gradient = TRUE,
+      icon = icon("question")
+    )
+  })
+
 
   output$vb_w2_obs_pct_in_sites <- renderbs4ValueBox({
     bs4ValueBox(

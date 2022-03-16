@@ -316,6 +316,7 @@ app_ui <- function(request) {
             fluidRow(
               bs4ValueBoxOutput("vb_w2_total_obs", width = 3),
               bs4ValueBoxOutput("vb_w2_obs_in_sites", width = 3),
+              bs4ValueBoxOutput("vb_w2_obs_no_sites", width = 3),
               bs4ValueBoxOutput("vb_w2_obs_pct_in_sites", width = 3)
             ),
             fluidRow(
