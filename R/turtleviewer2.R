@@ -16,6 +16,8 @@ utils::globalVariables(
     "site_datum",
     "site_latitude",
     "site_longitude",
-    "sites"
+    "sites",
+    "location_code",
+    "site_name"
   )
 )
