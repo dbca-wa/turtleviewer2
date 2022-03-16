@@ -9,7 +9,7 @@
 app_server <- function(input, output, session) {
 
   # Data ----------------------------------------------------------------------#
-  # WAStD areas cross session file reader
+  # ODK Import timestamp
   fn_odk <- here::here("inst/odk.txt")
   odk_imported <- if (!fs::file_exists(fn_odk)) {
     NULL
@@ -22,6 +22,7 @@ app_server <- function(input, output, session) {
     )
   }
 
+  # WAStD areas cross session file reader
   fn_wastd_sites <- here::here("inst/wastd_sites.rds")
   wastd_sites <- if (!fs::file_exists(fn_wastd_sites)) {
     NULL
@@ -47,7 +48,7 @@ app_server <- function(input, output, session) {
     )
   }
 
-  # Filtered by WAStD Area from select input or URL param "site"
+  # WAStD data filtered by WAStD Area from select input or URL param "site"
   wastd_data <- reactive({
     req(input$sel_wastd_area)
 
@@ -143,12 +144,15 @@ app_server <- function(input, output, session) {
 
   # Automatic data download ---------------------------------------------------#
   # This currently deactivated as it feels it gets in the user's way
+  #
   # Issue 1: it runs on session start (wastd data takes ca 40 mins to dl)
   # Issue 2: it resets the UI when done which interrupts the user's workflow
   #
   # A better approach is to create a separate Docker image to run the
   # long-running data ETL and download tasks on a scheduled cron job,
   # and mount the named volume read-write from both running containers.
+  #
+  # Data is downloaded through a scheduled cronjob by etlTurtleNesting.
   #
   # WAStD sites ---------------------------------------------------------------#
   # expire_wastd_sites <- reactiveTimer(1000 * 60 * 1) # Expire every 1 min
@@ -211,7 +215,7 @@ app_server <- function(input, output, session) {
   #   }
   # })
 
-  # Data filters --------------------------------------------------------------#
+  # Data filter UI elements ---------------------------------------------------#
   #
   # WAStD Localities
   output$flt_wastd <- renderUI({
@@ -245,19 +249,18 @@ app_server <- function(input, output, session) {
   })
 
   output$flt_w2_data_plc <- renderUI({
-    selectInput("w2_plc", label = "W2 Place:", choices = c("", sort(unique(req(w2_data())$enc$place_code))))
+    selectInput(
+      "w2_plc",
+      label = "W2 Place:",
+      choices = c("", sort(unique(req(w2_data())$enc$place_code)))
+    )
   })
 
   output$flt_w2_data_obs <- renderUI({
     textInput("w2_oid", label = "Observation ID:", value = "")
   })
 
-  #
-  # sites_by_pc <- reactive({
-  #   if (is.null(sites)) {NULL} else {
-  #     sites() %>% tidyr::separate_rows(w2_place_code)
-  #   }
-  # })
+  # sites_by_pc <- reactive({tidyr::separate_rows(req(wastd_sites())$sites, w2_place_code)})
 
   enc_by_sites <- reactive({
     req(w2_data())$enc %>%
@@ -329,11 +332,11 @@ app_server <- function(input, output, session) {
         longitude > -180, longitude < 180, latitude > -90, latitude < 90
       )
 
-    if (!is.na(input$w2_loc) && input$w2_loc != "") {
+    if (req(input$w2_loc) && input$w2_loc != "") {
       x <- dplyr::filter(x, location_code == input$w2_loc)
     }
 
-    if (!is.na(input$w2_plc) && input$w2_plc != "") {
+    if (req(input$w2_plc) && input$w2_plc != "") {
       x <- dplyr::filter(x, place_code == input$w2_plc)
     }
 
@@ -370,19 +373,10 @@ app_server <- function(input, output, session) {
   })
 
   # Outputs -------------------------------------------------------------------#
-  #
+  # Tab WAStD
   output$wastd_map <- leaflet::renderLeaflet({
     if (is.null(wastd_data())) {
-      leaflet::leaflet() %>%
-        leaflet::addProviderTiles("Esri.WorldImagery", group = "Basemap") %>%
-        leaflet::addProviderTiles(
-          "OpenStreetMap.Mapnik",
-          group = "Basemap",
-          options = leaflet::providerTileOptions(opacity = 0.35)
-        ) %>%
-        leaflet.extras::addFullscreenControl(pseudoFullscreen = TRUE) %>%
-        leaflet::addScaleBar(position = "bottomleft") %>%
-        leaflet::setView(130, -20, 5)
+      wastdr::leaflet_basemap()
     } else {
       wastdr::map_wastd(req(wastd_data()), cluster = TRUE)
     }
@@ -625,16 +619,7 @@ app_server <- function(input, output, session) {
         # l_height="calc(100vh - 80px)"
       )
     } else {
-      leaflet::leaflet() %>%
-        leaflet::addProviderTiles("Esri.WorldImagery", group = "Basemap") %>%
-        leaflet::addProviderTiles(
-          "OpenStreetMap.Mapnik",
-          group = "Basemap",
-          options = leaflet::providerTileOptions(opacity = 0.35)
-        ) %>%
-        leaflet.extras::addFullscreenControl(pseudoFullscreen = TRUE) %>%
-        leaflet::addScaleBar(position = "bottomleft") %>%
-        leaflet::setView(130, -20, 5)
+      wastdr::leaflet_basemap()
     }
   })
 
