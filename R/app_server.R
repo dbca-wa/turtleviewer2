@@ -323,13 +323,44 @@ app_server <- function(input, output, session) {
       )
   })
 
+  w2_enc <- reactive({
+    x <- req(w2_data()$enc) %>%
+      dplyr::filter(
+        longitude > -180, longitude < 180, latitude > -90, latitude < 90
+      )
+
+    if (!is.na(input$w2_loc) && input$w2_loc != "") {
+      x <- dplyr::filter(x, location_code == input$w2_loc)
+    }
+
+    if (!is.na(input$w2_plc) && input$w2_plc != "") {
+      x <- dplyr::filter(x, place_code == input$w2_plc)
+    }
+
+    x
+  })
+
   w2_obs_wastd_sites <- reactive({
-    req(w2_data())$enc %>%
+    req(w2_enc()) %>%
       dplyr::filter(
         longitude > -180, longitude < 180, latitude > -90, latitude < 90
       ) %>%
       sf::st_as_sf(coords = c("longitude", "latitude"), crs = 4326) %>%
-      sf::st_join(req(sites()), left = TRUE)
+      sf::st_join(req(wastd_sites())$sites, left = TRUE)
+  })
+
+  nrow_w2_enc_total <- reactive({
+    nrow(req(w2_enc()))
+  })
+
+  nrow_w2_enc_in_sites <- reactive({
+    req(w2_obs_wastd_sites()) %>%
+      dplyr::filter(!is.na(site_name)) %>%
+      nrow()
+  })
+
+  pct_w2_enc_in_sites <- reactive({
+    round(100 * nrow_w2_enc_in_sites() / nrow_w2_enc_total(), 2)
   })
 
   # Outputs -------------------------------------------------------------------#
@@ -498,15 +529,6 @@ app_server <- function(input, output, session) {
     )
   })
 
-  output$homeless_obs <- reactable::renderReactable({
-    reactable::reactable(
-      req(w2_data())$enc_qa,
-      sortable = TRUE,
-      filterable = TRUE,
-      searchable = TRUE,
-      defaultColDef = reactable::colDef(html = TRUE)
-    )
-  })
 
 
   # W2 Observations -----------------------------------------------------------#
@@ -538,6 +560,36 @@ app_server <- function(input, output, session) {
       color = "navy",
       gradient = TRUE,
       icon = icon("crosshairs")
+    )
+  })
+
+  output$vb_w2_total_obs <- renderbs4ValueBox({
+    bs4ValueBox(
+      value = tags$h3(req(nrow_w2_enc_total())),
+      subtitle = "Total Obs",
+      color = "info",
+      gradient = TRUE,
+      icon = icon("pencil-alt")
+    )
+  })
+
+  output$vb_w2_obs_in_sites <- renderbs4ValueBox({
+    bs4ValueBox(
+      value = tags$h3(req(nrow_w2_enc_in_sites())),
+      subtitle = "Obs in sites",
+      color = "info",
+      gradient = TRUE,
+      icon = icon("pencil-alt")
+    )
+  })
+
+  output$vb_w2_obs_pct_in_sites <- renderbs4ValueBox({
+    bs4ValueBox(
+      value = tags$h3(req(pct_w2_enc_in_sites())),
+      subtitle = "Pct in Sites",
+      color = ifelse(pct_w2_enc_in_sites() > 95, "success", "warning"),
+      gradient = TRUE,
+      icon = icon("percent")
     )
   })
 
@@ -582,6 +634,26 @@ app_server <- function(input, output, session) {
   output$unlikely_coords <- reactable::renderReactable({
     reactable::reactable(
       req(unlikely_coords()),
+      sortable = TRUE,
+      filterable = TRUE,
+      searchable = TRUE,
+      defaultColDef = reactable::colDef(html = TRUE)
+    )
+  })
+
+  output$homeless_obs <- reactable::renderReactable({
+    reactable::reactable(
+      req(w2_enc()), # TODO %>% dplyr::filter(is.na(site_name)),
+      sortable = TRUE,
+      filterable = TRUE,
+      searchable = TRUE,
+      defaultColDef = reactable::colDef(html = TRUE)
+    )
+  })
+
+  output$located_enc <- reactable::renderReactable({
+    reactable::reactable(
+      req(w2_enc()), # TODO %>% dplyr::filter(!is.na(site_name)),
       sortable = TRUE,
       filterable = TRUE,
       searchable = TRUE,

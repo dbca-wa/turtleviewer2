@@ -88,8 +88,6 @@ app_ui <- function(request) {
               # internesting interval
               # clutch frequency
               #
-
-
             ),
             menuSubItem(
               text = "Turtle Hatching",
@@ -135,7 +133,6 @@ app_ui <- function(request) {
                 bs4ValueBoxOutput("vb_proc_mis", width = 3),
                 bs4ValueBoxOutput("vb_new_res_rem", width = 3),
                 bs4ValueBoxOutput("vb_nesting_success", width = 3),
-
                 bs4ValueBoxOutput("odk_imported", width = 3),
                 bs4ValueBoxOutput("sites_dl_on", width = 3),
                 bs4ValueBoxOutput("wastd_dl_on", width = 3),
@@ -317,6 +314,11 @@ app_ui <- function(request) {
           tabItem(
             tabName = "tab_w2_observations",
             fluidRow(
+              bs4ValueBoxOutput("vb_w2_total_obs", width = 3),
+              bs4ValueBoxOutput("vb_w2_obs_in_sites", width = 3),
+              bs4ValueBoxOutput("vb_w2_obs_pct_in_sites", width = 3)
+            ),
+            fluidRow(
               bs4Card(
                 uiOutput("flt_w2_data_loc", class = "m-2"),
                 uiOutput("flt_w2_data_plc", class = "m-2"),
@@ -327,7 +329,7 @@ app_ui <- function(request) {
               ),
               bs4Card(
                 title = "WAMTRAM 2 Observations",
-                footer = "Select Place Code or Observation ID to filter data",
+                footer = "Select Location code, Place Code, or Observation ID to filter data",
                 leaflet::leafletOutput("map_w2_obs"),
                 width = 8
               )
@@ -348,6 +350,11 @@ app_ui <- function(request) {
                   title = "Homeless W2 Observations",
                   reactable::reactableOutput("homeless_obs"),
                   icon = icon("question")
+                ),
+                tabPanel(
+                  title = "Located W2 Observations",
+                  reactable::reactableOutput("located_enc"),
+                  icon = icon("crosshairs")
                 ),
                 width = 12,
                 maximizable = TRUE
