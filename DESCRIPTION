@@ -34,7 +34,7 @@ Imports:
     shiny (>= 1.7.1),
     tidyr,
     waiter,
-    wastdr (>= 0.8.10),
+    wastdr (>= 0.8.11),
 Suggests: 
     spelling,
     testthat (>= 3.0.0)

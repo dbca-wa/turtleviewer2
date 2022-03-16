@@ -140,4 +140,4 @@ image and publish it to the GitHub container registry.
 
 In the Rancher console to the BCS Kubernetes cluster, edit the
 “turtleviewer2” workload and update the image to the latest tag. This
-action could be automated through the k3s
+action could be automated through the k3s kubectl shell.
