@@ -5,18 +5,16 @@
 #' @param id,input,output,session Internal parameters for {shiny}.
 #'
 #' @noRd
-#'
-#' @importFrom shiny NS tagList
 mod_core_ui <- function(id) {
-  ns <- NS(id)
-  tagList()
+  ns <- shiny::NS(id)
+  shiny::tagList()
 }
 
 #' core Server Functions
 #'
 #' @noRd
 mod_core_server <- function(id) {
-  moduleServer(id, function(input, output, session) {
+  shiny::moduleServer(id, function(input, output, session) {
     ns <- session$ns
   })
 }

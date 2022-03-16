@@ -2,9 +2,9 @@
 #'
 #' @param input,output,session Internal parameters for {shiny}.
 #'     DO NOT REMOVE.
-#' @import shiny
+#' @importFrom shiny reactiveFileReader reactive observe observeEvent renderUI
+#'  selectInput textInput req parseQueryString updateSelectInput renderText
 #' @import bs4Dash
-#' @import wastdr
 #' @noRd
 app_server <- function(input, output, session) {
 
@@ -39,7 +39,7 @@ app_server <- function(input, output, session) {
   wastd_data_all <- if (!fs::file_exists(fn_wastd_data)) {
     NULL
   } else {
-    reactiveFileReader(
+    shiny::reactiveFileReader(
       1000, # Poll data file for changes every 1 second
       NULL, # across sessions
       fn_wastd_data, # relative to project or Dockerfile workdir

@@ -9,6 +9,7 @@
 utils::globalVariables(
   c(
     ".",
+    "code",
     "latitude",
     "longitude",
     "observations",

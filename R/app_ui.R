@@ -2,8 +2,9 @@
 #'
 #' @param request Internal parameter for `{shiny}`.
 #'     DO NOT REMOVE.
-#' @import shiny
+#' @importFrom shiny tagList uiOutput icon fluidRow tabPanel
 #' @import bs4Dash
+#' @import wastdr
 #' @noRd
 app_ui <- function(request) {
   golem::favicon("www/favicon.ico")
@@ -376,7 +377,7 @@ app_ui <- function(request) {
 #' resources inside the Shiny application.
 #'
 #' @import bs4Dash
-#' @import shiny
+#' @importFrom shiny tags
 #' @importFrom golem add_resource_path activate_js favicon bundle_resources
 #' @noRd
 golem_add_external_resources <- function() {

@@ -19,8 +19,6 @@ Imports:
     DBI,
     dplyr,
     fs, 
-    geojsonio, 
-    geojsonsf, 
     glue,
     golem (>= 0.3.2),
     here,
@@ -34,7 +32,7 @@ Imports:
     shiny (>= 1.7.1),
     tidyr,
     waiter,
-    wastdr (>= 0.8.11),
+    wastdr (>= 0.8.11)
 Suggests: 
     spelling,
     testthat (>= 3.0.0)
