@@ -22,7 +22,7 @@ app_server <- function(input, output, session) {
     )
   }
 
-    fn_wastd_sites <- here::here("inst/wastd_sites.rds")
+  fn_wastd_sites <- here::here("inst/wastd_sites.rds")
   wastd_sites <- if (!fs::file_exists(fn_wastd_sites)) {
     NULL
   } else {
@@ -395,9 +395,9 @@ app_server <- function(input, output, session) {
     bs4ValueBox(
       value = tags$h4(
         req(odk_imported()) %>%
-          lubridate::parse_date_time(orders="ymdHMS") %>%
+          lubridate::parse_date_time(orders = "ymdHMS") %>%
           lubridate::with_tz("Australia/Perth")
-        ),
+      ),
       subtitle = "ODK imported to WAStD",
       color = "navy",
       gradient = TRUE,
@@ -543,11 +543,13 @@ app_server <- function(input, output, session) {
 
   output$map_w2_obs <- leaflet::renderLeaflet({
     if (
-      (!is.na(input$w2_plc) && input$w2_plc != "") | input$w2_oid != ""
+      (!is.na(input$w2_loc) && input$w2_loc != "") |
+        (!is.na(input$w2_plc) && input$w2_plc != "") |
+        input$w2_oid != ""
     ) {
       wastdr::map_wamtram(
         req(w2_data()),
-        # location = input$w2_loc,
+        location = input$w2_loc,
         place = input$w2_plc,
         obs_id = input$w2_oid,
         wa_sites = req(wastd_sites())$sites
