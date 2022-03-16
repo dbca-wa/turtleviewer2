@@ -13,3 +13,6 @@ $run_dev.*
 ^inst/.env$
 ^inst/.env.template$
 ^inst/data$
+^inst/w2_data.rds$
+^inst/wastd_data.rds$
+^inst/wastd_sites.rds$
