@@ -71,9 +71,16 @@ app_ui <- function(request) {
         sidebarMenu(
           id = "sidebar_menu",
           menuItem(
+            text = "Marine Fauna Incidents",
+            tabName = "tab_incidents",
+            icon = icon("skull-crossbones")
+          ),
+          menuItem(
             text = "WA Sea Turtle DB",
             tabName = "tab_wastd",
             startExpanded = TRUE,
+            icon = icon("pizza-slice"),
+
             menuSubItem(
               text = "Turtle Nesting",
               tabName = "tab_turtle_nesting",
@@ -99,17 +106,14 @@ app_ui <- function(request) {
               text = "Disturbance",
               tabName = "tab_disturbance",
               icon = icon("bolt")
-            ),
-            menuSubItem(
-              text = "Incidents",
-              tabName = "tab_strandings",
-              icon = icon("skull-crossbones")
             )
           ),
           menuItem(
             text = "Turtle Tagging DB",
             tabName = "tab_wamtram",
             startExpanded = TRUE,
+            icon = icon("tags"),
+
             menuSubItem(
               text = "Places",
               tabName = "tab_w2_places",
@@ -126,6 +130,27 @@ app_ui <- function(request) {
       body = dashboardBody(
         waiter::useWaitress(),
         tabItems(
+          tabItem(
+            tabName = "tab_incidents",
+            fluidRow(
+              tabBox(
+                tabPanel(
+                  title = "Incidents by taxonomic group and cause of death",
+                  reactable::reactableOutput("mfi_summary"),
+                  icon = icon("chart-area")
+                ),
+                width=4
+              ),
+              bs4Card(
+                leaflet::leafletOutput("mfi_map"),
+                title = "Marine Fauna Incidents",
+                # footer= "footer",
+                width = 8,
+                # label = "label",
+                id = "box_mfi_map"
+              )
+            )
+          ),
           tabItem(
             tabName = "tab_turtle_nesting",
             fluidRow(
@@ -275,11 +300,6 @@ app_ui <- function(request) {
             tabName = "tab_disturbance",
             shiny::tags$h3("Map of disturbances"),
             shiny::tags$h3("Disturbances by season and cause")
-          ),
-          tabItem(
-            tabName = "tab_strandings",
-            shiny::tags$h3("Map of Marine Wildlife Incidents"),
-            shiny::tags$h3("Marine Wildlife Incidents by season and cause")
           ),
           tabItem(
             tabName = "tab_w2_places",

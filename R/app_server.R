@@ -387,6 +387,34 @@ app_server <- function(input, output, session) {
   # ---------------------------------------------------------------------------#
   # Outputs
   # ---------------------------------------------------------------------------#
+  #
+  # Tab WAStD - Incidents -----------------------------------------------------#
+  #
+  output$mfi_map <- leaflet::renderLeaflet({
+    if (is.null(wastd_data_all())) {
+      wastdr::leaflet_basemap()
+    } else {
+      req(wastd_data_all())$animals %>%
+        wastdr::filter_realspecies() %>%
+        wastdr::filter_dead() %>%
+        wastdr::map_mwi(sites = req(wastd_sites())$sites, split_species = FALSE)
+    }
+  })
+
+  output$mfi_summary <- reactable::renderReactable({
+    req(wastd_data_all())$animals %>%
+      wastdr::filter_realspecies() %>%
+      wastdr::filter_dead() %>%
+      dplyr::group_by(season, taxon, cause_of_death) %>%
+      dplyr::tally() %>%
+      dplyr::ungroup() %>%
+      reactable::reactable(
+        sortable = TRUE,
+        filterable = TRUE,
+        searchable = TRUE,
+        defaultColDef = reactable::colDef(html = TRUE)
+      )
+  })
 
   # Tab WAStD - Nesting -------------------------------------------------------#
   output$wastd_map <- leaflet::renderLeaflet({
@@ -470,7 +498,6 @@ app_server <- function(input, output, session) {
 
   # Tab WAStD - Hatching ------------------------------------------------------#
   # Tab WAStD - Disturbance ---------------------------------------------------#
-  # Tab WAStD - Incidents -----------------------------------------------------#
 
   # Tab WAMTRAM - Places ------------------------------------------------------#
   output$vb_place_loc_rate <- renderbs4ValueBox({
