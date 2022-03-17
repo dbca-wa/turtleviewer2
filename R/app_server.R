@@ -442,6 +442,12 @@ app_server <- function(input, output, session) {
     )
   })
 
+  output$plt_emergences <- plotly::renderPlotly({
+    req(wastd_emergences_area()) %>%
+      wastdr::ggplot_total_emergences_per_area_season_species() %>%
+      wastdr::plotly_total_emergences_per_area_season_species()
+  })
+
   output$tbl_total_emergences_proc_mis_area <- reactable::renderReactable({
     reactable::reactable(
       req(wastd_emergences_area()),

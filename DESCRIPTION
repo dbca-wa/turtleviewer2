@@ -28,6 +28,7 @@ Imports:
     reactable,
     sf (>= 1.0-7),
     shiny (>= 1.7.1),
+    plotly (>= 4.10.0),
     waiter,
     wastdr (>= 0.8.12)
 Suggests: 

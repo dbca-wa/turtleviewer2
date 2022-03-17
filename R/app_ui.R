@@ -150,6 +150,11 @@ app_ui <- function(request) {
               tabBox(
                 tabPanel(
                   title = "Total emergences (Area)",
+                  plotly::plotlyOutput("plt_emergences"),
+                  icon = icon("arrow-up")
+                ),
+                tabPanel(
+                  title = "Total emergences (Area)",
                   reactable::reactableOutput("tbl_total_emergences_proc_mis_area"),
                   # shiny::plotOutput("plt_total_emergences_proc_mis_area"),
                   icon = icon("arrow-up")
