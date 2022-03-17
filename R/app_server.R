@@ -262,6 +262,16 @@ app_server <- function(input, output, session) {
 
   # sites_by_pc <- reactive({tidyr::separate_rows(req(wastd_sites())$sites, w2_place_code)})
 
+  # Derived WAStD data --------------------------------------------------------#
+  wastd_emergences_area <- reactive({
+    req(wastd_data()) %>% total_emergences_per_area_season_species()
+  })
+
+  wastd_emergences_site <- reactive({
+    req(wastd_data()) %>% total_emergences_per_site_season_species()
+  })
+
+  # Derived WAMTRAM data ------------------------------------------------------#
   enc_by_sites <- reactive({
     req(w2_data())$enc %>%
       dplyr::group_by(place_code) %>%
@@ -327,16 +337,16 @@ app_server <- function(input, output, session) {
   })
 
   w2_enc <- reactive({
-    x <- req(w2_data()$enc) %>%
+    x <- req(w2_data())$enc %>%
       dplyr::filter(
         longitude > -180, longitude < 180, latitude > -90, latitude < 90
       )
 
-    if (req(input$w2_loc) && input$w2_loc != "") {
+    if (!is.null(input$w2_loc) && input$w2_loc != "") {
       x <- dplyr::filter(x, location_code == input$w2_loc)
     }
 
-    if (req(input$w2_plc) && input$w2_plc != "") {
+    if (!is.null(input$w2_plc) && input$w2_plc != "") {
       x <- dplyr::filter(x, place_code == input$w2_plc)
     }
 
@@ -353,7 +363,7 @@ app_server <- function(input, output, session) {
   })
 
   nrow_w2_enc_total <- reactive({
-    nrow(req(w2_enc()))
+    req(w2_enc()) %>% nrow()
   })
 
   nrow_w2_enc_in_sites <- reactive({
@@ -372,54 +382,19 @@ app_server <- function(input, output, session) {
     round(100 * nrow_w2_enc_in_sites() / nrow_w2_enc_total(), 2)
   })
 
-  # Outputs -------------------------------------------------------------------#
-  # Tab WAStD
+  # End derived WAMTRAM data --------------------------------------------------#
+
+  # ---------------------------------------------------------------------------#
+  # Outputs
+  # ---------------------------------------------------------------------------#
+
+  # Tab WAStD - Nesting -------------------------------------------------------#
   output$wastd_map <- leaflet::renderLeaflet({
     if (is.null(wastd_data())) {
       wastdr::leaflet_basemap()
     } else {
       wastdr::map_wastd(req(wastd_data()), cluster = TRUE)
     }
-  })
-
-  output$vb_total_emergences <- renderbs4ValueBox({
-    bs4ValueBox(
-      value = tags$h3("1234"),
-      subtitle = "Total Emergences",
-      color = "indigo",
-      gradient = TRUE,
-      icon = icon("arrow-up")
-    )
-  })
-
-  output$vb_proc_mis <- renderbs4ValueBox({
-    bs4ValueBox(
-      value = tags$h3("1234 / 500"),
-      subtitle = "Processed / Missed",
-      color = "lime",
-      gradient = TRUE,
-      icon = icon("pencil-alt")
-    )
-  })
-
-  output$vb_new_res_rem <- renderbs4ValueBox({
-    bs4ValueBox(
-      value = tags$h3("100 / 200 / 100"),
-      subtitle = "New / Resighted / Remigrant",
-      color = "orange",
-      gradient = TRUE,
-      icon = icon("eye")
-    )
-  })
-
-  output$vb_nesting_success <- renderbs4ValueBox({
-    bs4ValueBox(
-      value = tags$h3("50%"),
-      subtitle = "Nesting sucess",
-      color = "teal",
-      gradient = TRUE,
-      icon = icon("thumbs-up")
-    )
   })
 
   output$odk_imported <- renderbs4ValueBox({
@@ -467,7 +442,31 @@ app_server <- function(input, output, session) {
     )
   })
 
-  # W2 Places -----------------------------------------------------------------#
+  output$tbl_total_emergences_proc_mis_area <- reactable::renderReactable({
+    reactable::reactable(
+      req(wastd_emergences_area()),
+      sortable = TRUE,
+      filterable = TRUE,
+      searchable = TRUE,
+      defaultColDef = reactable::colDef(html = TRUE)
+    )
+  })
+
+  output$tbl_total_emergences_proc_mis_site <- reactable::renderReactable({
+    reactable::reactable(
+      req(wastd_emergences_site()),
+      sortable = TRUE,
+      filterable = TRUE,
+      searchable = TRUE,
+      defaultColDef = reactable::colDef(html = TRUE)
+    )
+  })
+
+  # Tab WAStD - Hatching ------------------------------------------------------#
+  # Tab WAStD - Disturbance ---------------------------------------------------#
+  # Tab WAStD - Incidents -----------------------------------------------------#
+
+  # Tab WAMTRAM - Places ------------------------------------------------------#
   output$vb_place_loc_rate <- renderbs4ValueBox({
     x <- round(100 * (nrow(req(located_places())) / nrow(req(wastd_sites())$sites)), 0)
     bs4ValueBox(
@@ -529,40 +528,8 @@ app_server <- function(input, output, session) {
     )
   })
 
-
-
-  # W2 Observations -----------------------------------------------------------#
-  #
-  selected_place <- reactive({
-    req(w2_data())$sites %>% dplyr::filter(code == input$w2_plc)
-  })
-  output$txt_w2_plc_lat <- renderText({
-    glue::glue("Lat {round(req(selected_place())$site_latitude, 5)}")
-  })
-  output$txt_w2_plc_lon <- renderText({
-    glue::glue("Lon {round(req(selected_place())$site_longitude, 5)}")
-  })
-
-  output$vb_w2_plc_lat <- renderbs4ValueBox({
-    bs4ValueBox(
-      value = tags$h3(round(req(selected_place())$site_latitude, 5)),
-      subtitle = "W2 Site Lat",
-      color = "navy",
-      gradient = TRUE,
-      icon = icon("crosshairs")
-    )
-  })
-
-  output$vb_w2_plc_lon <- renderbs4ValueBox({
-    bs4ValueBox(
-      value = tags$h3(round(req(selected_place())$site_longitude, 5)),
-      subtitle = "W2 Site Lon",
-      color = "navy",
-      gradient = TRUE,
-      icon = icon("crosshairs")
-    )
-  })
-
+  # Tab WAMTRAM - Observations ------------------------------------------------#
+  # Row valueBoxes
   output$vb_w2_total_obs <- renderbs4ValueBox({
     bs4ValueBox(
       value = tags$h3(req(nrow_w2_enc_total())),
@@ -604,10 +571,39 @@ app_server <- function(input, output, session) {
     )
   })
 
+  # Col loc/place/obs select
+  selected_place <- reactive({
+    req(input$w2_plc)
+    req(w2_data())$sites %>% dplyr::filter(code == input$w2_plc)
+  })
+
+  output$vb_w2_plc_lat <- renderbs4ValueBox({
+    req(selected_place())
+    bs4ValueBox(
+      value = tags$h3(round(req(selected_place())$site_latitude, 5)),
+      subtitle = "W2 Site Lat",
+      color = "navy",
+      gradient = TRUE,
+      icon = icon("crosshairs")
+    )
+  })
+
+  output$vb_w2_plc_lon <- renderbs4ValueBox({
+    req(selected_place())
+    bs4ValueBox(
+      value = tags$h3(round(req(selected_place())$site_longitude, 5)),
+      subtitle = "W2 Site Lon",
+      color = "navy",
+      gradient = TRUE,
+      icon = icon("crosshairs")
+    )
+  })
+
+  # Col map
   output$map_w2_obs <- leaflet::renderLeaflet({
     if (
-      (!is.na(input$w2_loc) && input$w2_loc != "") |
-        (!is.na(input$w2_plc) && input$w2_plc != "") |
+      (!is.null(input$w2_loc) && input$w2_loc != "") |
+        (!is.null(input$w2_plc) && input$w2_plc != "") |
         input$w2_oid != ""
     ) {
       wastdr::map_wamtram(
@@ -623,6 +619,7 @@ app_server <- function(input, output, session) {
     }
   })
 
+  # Row tabset tables
   output$impossible_coords <- reactable::renderReactable({
     reactable::reactable(
       req(invalid_coords()),
@@ -665,6 +662,3 @@ app_server <- function(input, output, session) {
 
   # /outputs ------------------------------------------------------------------#
 }
-
-# TODO https://shiny.rstudio.com/reference/shiny/1.3.2/reactivePoll.html
-# TODO https://shiny.rstudio.com/reference/shiny/1.3.2/reactiveFileReader.html

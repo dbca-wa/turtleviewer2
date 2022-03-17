@@ -16,7 +16,6 @@ Depends:
 Imports: 
     bs4Dash (>= 0.5.0),
     config (>= 0.3.1),
-    DBI,
     dplyr,
     fs, 
     glue,
@@ -26,11 +25,9 @@ Imports:
     janitor,
     leaflet (>= 2.0.4.1),
     leaflet.extras (>= 1.0.0),
-    odbc, 
     reactable,
     sf (>= 1.0-7),
     shiny (>= 1.7.1),
-    tidyr,
     waiter,
     wastdr (>= 0.8.12)
 Suggests: 

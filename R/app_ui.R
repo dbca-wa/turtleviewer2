@@ -129,17 +129,10 @@ app_ui <- function(request) {
           tabItem(
             tabName = "tab_turtle_nesting",
             fluidRow(
-              boxLayout(
-                bs4ValueBoxOutput("vb_total_emergences", width = 3),
-                bs4ValueBoxOutput("vb_proc_mis", width = 3),
-                bs4ValueBoxOutput("vb_new_res_rem", width = 3),
-                bs4ValueBoxOutput("vb_nesting_success", width = 3),
-                bs4ValueBoxOutput("odk_imported", width = 3),
-                bs4ValueBoxOutput("sites_dl_on", width = 3),
-                bs4ValueBoxOutput("wastd_dl_on", width = 3),
-                bs4ValueBoxOutput("w2_dl_on", width = 3),
-                type = "group"
-              )
+              bs4ValueBoxOutput("odk_imported", width = 3),
+              bs4ValueBoxOutput("sites_dl_on", width = 3),
+              bs4ValueBoxOutput("wastd_dl_on", width = 3),
+              bs4ValueBoxOutput("w2_dl_on", width = 3)
             ),
             # WAStD Data Map --------------------------------------------------#
             fluidRow(
@@ -156,9 +149,15 @@ app_ui <- function(request) {
             fluidRow(
               tabBox(
                 tabPanel(
-                  title = "Total emergences",
-                  # reactable::reactableOutput("tbl_total_emergences_proc_mis")
-                  # shiny::plotOutput("plt_total_emergences_proc_mis")
+                  title = "Total emergences (Area)",
+                  reactable::reactableOutput("tbl_total_emergences_proc_mis_area"),
+                  # shiny::plotOutput("plt_total_emergences_proc_mis_area"),
+                  icon = icon("arrow-up")
+                ),
+                tabPanel(
+                  title = "Total emergences (Site)",
+                  reactable::reactableOutput("tbl_total_emergences_proc_mis_site"),
+                  # shiny::plotOutput("plt_total_emergences_proc_mis_site"),
                   icon = icon("arrow-up")
                 ),
                 tabPanel(
