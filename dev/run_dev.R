@@ -21,7 +21,7 @@ usethis::use_version()
 usethis::edit_file("NEWS.md")
 usethis::edit_file("inst/CITATION")
 
-# Git commit, then tag and push
+# Build to load new package version. Git commit, tag, and push.
 v <- packageVersion("turtleviewer2")
 system(glue::glue("git tag -a v{v} -m 'v{v}'"))
 system(glue::glue("git push && git push --tags"))

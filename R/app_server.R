@@ -264,11 +264,11 @@ app_server <- function(input, output, session) {
 
   # Derived WAStD data --------------------------------------------------------#
   wastd_emergences_area <- reactive({
-    req(wastd_data()) %>% total_emergences_per_area_season_species()
+    req(wastd_data()) %>% wastdr::total_emergences_per_area_season_species()
   })
 
   wastd_emergences_site <- reactive({
-    req(wastd_data()) %>% total_emergences_per_site_season_species()
+    req(wastd_data()) %>% wastdr::total_emergences_per_site_season_species()
   })
 
   # Derived WAMTRAM data ------------------------------------------------------#
