@@ -18,54 +18,12 @@ app_ui <- function(request) {
       scrollToTop = TRUE,
       # preloader = list(html = waiter::spin_chasing_dots(), color = "#333e48"),
       header = dashboardHeader(
-        # Download button: WAStD Sites
-        bs4Dash::actionButton(
-          "action_dl_wastd_sites",
-          "Update WAStD Sites",
-          status = "primary",
-          outline = TRUE,
-          size = "xs",
-          class = "btn btn-xs m-1"
-        ),
-        # Download button: WAStD Data
-        bs4Dash::actionButton(
-          "action_dl_wastd_data",
-          "Update WAStD Data",
-          status = "primary",
-          outline = TRUE,
-          size = "xs",
-          class = "btn btn-xs m-1"
-        ),
-        # Download button: WAMTRAM Data
-        bs4Dash::actionButton(
-          "action_dl_w2_data",
-          "Update WAMTRAM data",
-          status = "primary",
-          outline = TRUE,
-          size = "xs",
-          class = "btn btn-xs m-1"
-        ),
-        # Filter: WAStD Localities
-        uiOutput(
-          "flt_wastd",
-          inline = TRUE,
-          class = "btn btn-xs"
-        ),
         title = dashboardBrand(
-          title = "WA Turtle Data",
+          title = "DBCA Marine Data",
           color = "primary",
           href = "https://turtledata.dbca.wa.gov.au/"
           # image = "www/logo.svg"
         )
-        # # Download button: All Data
-        # bs4Dash::actionButton(
-        #   "action_export_data",
-        #   "Download data",
-        #   status = "danger",
-        #   outline = TRUE,
-        #   size = "xs",
-        #   class = "btn btn-xs m-1"
-        # )
       ),
       sidebar = dashboardSidebar(
         sidebarMenu(
@@ -76,51 +34,32 @@ app_ui <- function(request) {
             icon = icon("skull-crossbones")
           ),
           menuItem(
-            text = "WA Sea Turtle DB",
+            text = "WA Turtle Monitoring",
             tabName = "tab_wastd",
             startExpanded = TRUE,
             icon = icon("pizza-slice"),
-
             menuSubItem(
               text = "Turtle Nesting",
               tabName = "tab_turtle_nesting",
               icon = icon("home")
-
-              # absolute numbers or density per km coastline
-              # timeseries, group = species
-              #
-              # total emergences
-              # emergences split by nesting success
-              # emergences split by processing status
-              # emergences split by sighting status: new, resight, remigrant
-              # internesting interval
-              # clutch frequency
-              #
             ),
+            # menuSubItem(
+            #   text = "Turtle Hatching",
+            #   tabName = "tab_turtle_hatching",
+            #   icon = icon("egg")
+            # ),
+            # menuSubItem(
+            #   text = "Disturbance",
+            #   tabName = "tab_disturbance",
+            #   icon = icon("bolt")
+            # ),
             menuSubItem(
-              text = "Turtle Hatching",
-              tabName = "tab_turtle_hatching",
-              icon = icon("egg")
-            ),
-            menuSubItem(
-              text = "Disturbance",
-              tabName = "tab_disturbance",
-              icon = icon("bolt")
-            )
-          ),
-          menuItem(
-            text = "Turtle Tagging DB",
-            tabName = "tab_wamtram",
-            startExpanded = TRUE,
-            icon = icon("tags"),
-
-            menuSubItem(
-              text = "Places",
+              text = "WAMTRAM Places",
               tabName = "tab_w2_places",
               icon = icon("map")
             ),
             menuSubItem(
-              text = "Observations",
+              text = "WAMTRAM Observations",
               tabName = "tab_w2_observations",
               icon = icon("pencil-alt")
             )
@@ -133,19 +72,27 @@ app_ui <- function(request) {
           tabItem(
             tabName = "tab_incidents",
             fluidRow(
+              bs4Card(
+                uiOutput("flt_mfi_daterange", class="col-3"),
+                title = "Filter and export Marine Fauna Incident Data",
+                width = 12,
+                id = "box_mfi_filter"
+              )
+            ),
+            fluidRow(
               tabBox(
                 tabPanel(
-                  title = "Incidents by taxonomic group and cause of death",
+                  title = "Incidents by taxonomic group and incident type",
                   reactable::reactableOutput("mfi_summary"),
                   icon = icon("chart-area")
                 ),
-                width=4
+                width = 6
               ),
               bs4Card(
                 leaflet::leafletOutput("mfi_map"),
-                title = "Marine Fauna Incidents",
-                # footer= "footer",
-                width = 8,
+                title = "Marine Fauna Incident Map",
+                footer = "View Fullscreen for a bigger map",
+                width = 6,
                 # label = "label",
                 id = "box_mfi_map"
               )
@@ -154,20 +101,37 @@ app_ui <- function(request) {
           tabItem(
             tabName = "tab_turtle_nesting",
             fluidRow(
-              bs4ValueBoxOutput("odk_imported", width = 3),
-              bs4ValueBoxOutput("sites_dl_on", width = 3),
-              bs4ValueBoxOutput("wastd_dl_on", width = 3),
-              bs4ValueBoxOutput("w2_dl_on", width = 3)
+              bs4Card(
+                fluidRow(
+                  bs4ValueBoxOutput("odk_imported", width = 3),
+                  bs4ValueBoxOutput("wastd_dl_on", width = 3),
+                  bs4ValueBoxOutput("sites_dl_on", width = 3),
+                  bs4ValueBoxOutput("w2_dl_on", width = 3)
+                ),
+
+                # # Download button: All Data
+                # bs4Dash::actionButton(
+                #   "action_export_data",
+                #   "Download data",
+                #   status = "danger",
+                #   outline = TRUE,
+                #   size = "xs",
+                #   class = "btn btn-xs m-1"
+                # )
+                fluidRow(
+                  uiOutput("flt_wastd_areas", class = "btn btn-xs col-3"),
+                  uiOutput("flt_wastd_seasons", class = "btn btn-xs col-3")
+                ),
+                title = "Filter and export Turtle Monitoring Data",
+                width = 12
+              )
             ),
             # WAStD Data Map --------------------------------------------------#
             fluidRow(
               bs4Card(
                 leaflet::leafletOutput("wastd_map"),
-                title = "All WAStD data",
-                # footer= "footer",
+                title = "Turtle Monitoring Overview",
                 width = 12,
-                maximizable = TRUE,
-                # label = "label",
                 id = "box_all_wastd_data"
               )
             ), #---------------------------------------------------------------#
@@ -349,13 +313,13 @@ app_ui <- function(request) {
                 uiOutput("flt_w2_data_loc", class = "m-2"),
                 uiOutput("flt_w2_data_plc", class = "m-2"),
                 uiOutput("flt_w2_data_obs", class = "m-2"),
-                bs4ValueBoxOutput("vb_w2_plc_lat", width = 12),
-                bs4ValueBoxOutput("vb_w2_plc_lon", width = 12),
+                bs4ValueBoxOutput("vb_w2_plc_lat_lon", width = 12),
+                title = "Filter WAMTRAM 2 Observations",
                 width = 4
               ),
               bs4Card(
                 title = "WAMTRAM 2 Observations",
-                footer = "Select Location code, Place Code, or Observation ID to filter data",
+                footer = "Compare coordinates from outliers' popups to Site Lat/Lon",
                 leaflet::leafletOutput("map_w2_obs"),
                 width = 8
               )

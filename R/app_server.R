@@ -3,7 +3,8 @@
 #' @param input,output,session Internal parameters for {shiny}.
 #'     DO NOT REMOVE.
 #' @importFrom shiny reactiveFileReader reactive observe observeEvent renderUI
-#'  selectInput textInput req parseQueryString updateSelectInput renderText
+#'  selectInput textInput req parseQueryString updateSelectInput renderText HTML
+#'  dateRangeInput
 #' @import bs4Dash
 #' @noRd
 app_server <- function(input, output, session) {
@@ -47,18 +48,6 @@ app_server <- function(input, output, session) {
       readRDS # using function readRDS
     )
   }
-
-  # WAStD data filtered by WAStD Area from select input or URL param "site"
-  wastd_data <- reactive({
-    req(input$sel_wastd_area)
-
-    if (input$sel_wastd_area == "Select a program") {
-      return(NULL)
-    } else {
-      req(wastd_data_all()) %>%
-        wastdr::filter_wastd_turtledata(input$sel_wastd_area)
-    }
-  })
 
   # WAMTRAM data cross session file reader
   fn_w2_data <- here::here("inst/w2_data.rds")
@@ -142,86 +131,14 @@ app_server <- function(input, output, session) {
     waitress_w2_data$close()
   })
 
-  # Automatic data download ---------------------------------------------------#
-  # This currently deactivated as it feels it gets in the user's way
-  #
-  # Issue 1: it runs on session start (wastd data takes ca 40 mins to dl)
-  # Issue 2: it resets the UI when done which interrupts the user's workflow
-  #
-  # A better approach is to create a separate Docker image to run the
-  # long-running data ETL and download tasks on a scheduled cron job,
-  # and mount the named volume read-write from both running containers.
-  #
-  # Data is downloaded through a scheduled cronjob by etlTurtleNesting.
-  #
-  # WAStD sites ---------------------------------------------------------------#
-  # expire_wastd_sites <- reactiveTimer(1000 * 60 * 1) # Expire every 1 min
-
-  # observe({
-  #   # expire_wastd_sites()
-  #   invalidateLater(1000 * 60 * 60 * 1)
-  #
-  #   waitress_wastd_sites$start()
-  #   "[{Sys.time()}] Downloading WAStD Sites to {fn_wastd_sites}" %>%
-  #     glue::glue() %>%
-  #     wastdr::wastdr_msg_info()
-  #
-  #   sites <- wastdr::download_wastd_sites()
-  #   saveRDS(sites, file = fn_wastd_sites)
-  #   waitress_wastd_sites$close()
-  # })
-
-  # WAStD data ----------------------------------------------------------------#
-  # expire_wastd_data <- reactiveTimer(1000 * 60 * 60 * 2) # Expire every 2h
-  #
-  # observe({
-  #   expire_wastd_data()
-  #
-  #   "Downloading WAStD Data to {fn_wastd_data}" %>%
-  #     glue::glue() %>%
-  #     wastdr::wastdr_msg_info()
-  #
-  #   # wastd_data <- wastdr::download_wastd_turtledata(
-  #   #   max_records = 1000 # TODO: drop limit for prod
-  #   # )
-  #   # saveRDS(wastd_data, file = fn_wastd_data)
-  #
-  #
-  #   "WAStD Data saved locally to folder {fn_wastd_data}." %>%
-  #     glue::glue() %>%
-  #     wastdr::wastdr_msg_success()
-  # })
-
-  # WAMTRAM data --------------------------------------------------------------#
-  # expire_wamtram_data <- reactiveTimer(1000 * 60 * 60) # Expire every 1h
-  #
-  # observe({
-  #   expire_wamtram_data()
-  #
-  #   if (wastdr::w2_online() == FALSE) {
-  #     "WAMTRAM not accessible. Need to run in DBCA intranet with credentials in env vars." %>%
-  #       glue::glue() %>%
-  #       wastdr::wastdr_msg_info()
-  #   } else {
-  #     "[{Sys.time()}] Downloading WAMTRAM Data to {fn_w2_data}" %>%
-  #       glue::glue() %>%
-  #       wastdr::wastdr_msg_info()
-  #
-  #     w2_data <- wastdr::download_w2_data(save = fn_w2_data)
-  #
-  #     "WAMTRAM Data saved locally to folder {fn_w2_data}." %>%
-  #       glue::glue() %>%
-  #       wastdr::wastdr_msg_success()
-  #   }
-  # })
 
   # Data filter UI elements ---------------------------------------------------#
   #
   # WAStD Localities
-  output$flt_wastd <- renderUI({
+  output$flt_wastd_areas <- renderUI({
     selectInput(
       "sel_wastd_area",
-      label = NULL,
+      label = "Programs / Locations",
       choices = c(
         "Select a program",
         req(wastd_data_all())$areas$area_name,
@@ -231,6 +148,18 @@ app_server <- function(input, output, session) {
     )
   })
 
+  output$flt_wastd_seasons <- renderUI({
+    seasons <- sort(unique(req(wastd_data_all())$tracks$season))
+    selectInput(
+      "sel_wastd_seasons",
+      label = "Seasons (coming soon)",
+      multiple = TRUE,
+      selected = seasons,
+      choices = seasons
+    )
+  })
+
+
   # Make WAStD Area selections bookmarkable via query parameter "site"
   observe({
     query <- parseQueryString(session$clientData$url_search)
@@ -239,30 +168,25 @@ app_server <- function(input, output, session) {
     }
   })
 
-  # WAMTRAM select Locations, Places, enter ObsID
-  output$flt_w2_data_loc <- renderUI({
-    selectInput(
-      "w2_loc",
-      label = "W2 Location:",
-      choices = c("", sort(unique(req(w2_data())$enc$location_code)))
-    )
-  })
-
-  output$flt_w2_data_plc <- renderUI({
-    selectInput(
-      "w2_plc",
-      label = "W2 Place:",
-      choices = c("", sort(unique(req(w2_data())$enc$place_code)))
-    )
-  })
-
-  output$flt_w2_data_obs <- renderUI({
-    textInput("w2_oid", label = "Observation ID:", value = "")
-  })
-
   # sites_by_pc <- reactive({tidyr::separate_rows(req(wastd_sites())$sites, w2_place_code)})
 
-  # Derived WAStD data --------------------------------------------------------#
+  # Filtered and derived WAStD data -------------------------------------------#
+  # WAStD data filtered by WAStD Area from select input or URL param "site"
+  wastd_data <- reactive({
+    req(input$sel_wastd_area)
+
+    if (input$sel_wastd_area == "Select a program") {
+      return(NULL)
+    } else {
+      req(wastd_data_all()) %>%
+        wastdr::filter_wastd_turtledata(input$sel_wastd_area)
+    }
+
+    # TODO filter by seasons
+    # wastdr::filter_wastd_season() to accept start_season, end_season
+
+  })
+
   wastd_emergences_area <- reactive({
     req(wastd_data()) %>% wastdr::total_emergences_per_area_season_species()
   })
@@ -381,7 +305,6 @@ app_server <- function(input, output, session) {
   pct_w2_enc_in_sites <- reactive({
     round(100 * nrow_w2_enc_in_sites() / nrow_w2_enc_total(), 2)
   })
-
   # End derived WAMTRAM data --------------------------------------------------#
 
   # ---------------------------------------------------------------------------#
@@ -389,29 +312,60 @@ app_server <- function(input, output, session) {
   # ---------------------------------------------------------------------------#
   #
   # Tab WAStD - Incidents -----------------------------------------------------#
-  #
+  output$flt_mfi_daterange <- renderUI({
+    dateRangeInput("mfi_daterange",
+      label = "Select date range:",
+      start = "2022-01-01",
+      format = "yyyy-mm-dd",
+      startview = "year",
+      weekstart = 1,
+      language = "en-AU"
+      # end = Sys.Date() + 2
+    )
+  })
+
+  mfi_data_all <- reactive({
+    req(wastd_data_all())$animals %>%
+      wastdr::filter_realspecies() %>%
+      wastdr::filter_dead()
+  })
+
+  mfi_data <- reactive({
+    if (is.null(input$mfi_daterange[1])) {
+      req(wastd_data_all()$animals)
+    } else {
+      print(input$mfi_daterange)
+      mfi_data_all() %>%
+        dplyr::filter(
+          calendar_date_awst >= input$mfi_daterange[1],
+          calendar_date_awst <= input$mfi_daterange[2]
+        )
+    }
+  })
+
   output$mfi_map <- leaflet::renderLeaflet({
-    if (is.null(wastd_data_all())) {
+    if (is.null(mfi_data())) {
       wastdr::leaflet_basemap()
     } else {
-      req(wastd_data_all())$animals %>%
-        wastdr::filter_realspecies() %>%
-        wastdr::filter_dead() %>%
+      req(mfi_data()) %>%
         wastdr::map_mwi(sites = req(wastd_sites())$sites, split_species = FALSE)
     }
   })
 
   output$mfi_summary <- reactable::renderReactable({
-    req(wastd_data_all())$animals %>%
-      wastdr::filter_realspecies() %>%
-      wastdr::filter_dead() %>%
+    req(mfi_data()) %>%
       dplyr::group_by(season, taxon, cause_of_death) %>%
       dplyr::tally() %>%
       dplyr::ungroup() %>%
+      dplyr::rename(
+        `Season (FY)` = season,
+        `Taxonomic Group` = taxon,
+        `Incident type` = cause_of_death,
+        `Tally` = n
+      ) %>%
       reactable::reactable(
         sortable = TRUE,
         filterable = TRUE,
-        searchable = TRUE,
         defaultColDef = reactable::colDef(html = TRUE)
       )
   })
@@ -443,7 +397,9 @@ app_server <- function(input, output, session) {
     bs4ValueBox(
       value = tags$h4(req(wastd_data_all())$downloaded_on %>%
         lubridate::with_tz("Australia/Perth")),
-      subtitle = "WAStD data downloaded",
+      subtitle = HTML('WAStD data downloaded',
+                      # '<a href="" class="btn btn-info">Refresh</a>'
+                      ),
       color = "navy",
       gradient = TRUE,
       icon = icon("download")
@@ -453,7 +409,11 @@ app_server <- function(input, output, session) {
   output$w2_dl_on <- renderbs4ValueBox({
     bs4ValueBox(
       value = tags$h4(req(w2_data())$downloaded_on %>% lubridate::with_tz("Australia/Perth")),
-      subtitle = "WAMTRAM data downloaded",
+      subtitle = HTML(
+        'WAMTRAM data downloaded ',
+        '<button id="action_dl_w2_data" type="button" ',
+        'class="btn action-button btn-xs btn-outline-warning ml-2">',
+        'Refresh</button>'),
       color = "navy",
       gradient = TRUE,
       icon = icon("download")
@@ -463,7 +423,11 @@ app_server <- function(input, output, session) {
   output$sites_dl_on <- renderbs4ValueBox({
     bs4ValueBox(
       value = tags$h4(req(wastd_sites())$downloaded_on %>% lubridate::with_tz("Australia/Perth")),
-      subtitle = "WAStD Sites downloaded",
+      subtitle = HTML(
+        'WAStD sites downloaded ',
+        '<button id="action_dl_wastd_sites" type="button" ',
+        'class="btn action-button btn-xs btn-outline-warning ml-2">',
+        'Refresh</button>'),
       color = "navy",
       gradient = TRUE,
       icon = icon("download")
@@ -496,15 +460,26 @@ app_server <- function(input, output, session) {
     )
   })
 
-  # Tab WAStD - Hatching ------------------------------------------------------#
-  # Tab WAStD - Disturbance ---------------------------------------------------#
+  # emergences split by nesting success
+  # emergences split by processing status
+  # emergences split by sighting status: new, resight, remigrant
+  # internesting interval
+  # clutch frequency
+  # morphometrics
+  # injuries
 
+  # Tab WAStD - Hatching ------------------------------------------------------#
+  # hs/es
+  #
+  # Tab WAStD - Disturbance ---------------------------------------------------#
+  # general and nest dist
+  #
   # Tab WAMTRAM - Places ------------------------------------------------------#
   output$vb_place_loc_rate <- renderbs4ValueBox({
-    x <- round(100 * (nrow(req(located_places())) / nrow(req(wastd_sites())$sites)), 0)
+    x <- round(100 * (nrow(req(located_places())) / nrow(req(w2_data())$sites)), 0)
     bs4ValueBox(
       value = tags$h3(x),
-      subtitle = "% W2 places located",
+      subtitle = "% W2 places located in WAStD",
       color = dplyr::case_when(
         x < 70 ~ "maroon",
         x < 90 ~ "orange",
@@ -517,7 +492,7 @@ app_server <- function(input, output, session) {
   })
 
   output$vb_place_homeless_rate <- renderbs4ValueBox({
-    x <- round(100 * (nrow(req(homeless_places())) / nrow(req(wastd_sites())$sites)), 0)
+    x <- round(100 * (nrow(req(homeless_places())) / nrow(req(w2_data())$sites)), 0)
 
     bs4ValueBox(
       value = tags$h3(x),
@@ -562,7 +537,26 @@ app_server <- function(input, output, session) {
   })
 
   # Tab WAMTRAM - Observations ------------------------------------------------#
-  # Row valueBoxes
+  output$flt_w2_data_loc <- renderUI({
+    selectInput(
+      "w2_loc",
+      label = "W2 Location:",
+      choices = c("", sort(unique(req(w2_data())$enc$location_code)))
+    )
+  })
+
+  output$flt_w2_data_plc <- renderUI({
+    selectInput(
+      "w2_plc",
+      label = "W2 Place:",
+      choices = c("", sort(unique(req(w2_data())$enc$place_code)))
+    )
+  })
+
+  output$flt_w2_data_obs <- renderUI({
+    textInput("w2_oid", label = "Observation ID:", value = "")
+  })
+
   output$vb_w2_total_obs <- renderbs4ValueBox({
     bs4ValueBox(
       value = tags$h3(req(nrow_w2_enc_total())),
@@ -593,7 +587,6 @@ app_server <- function(input, output, session) {
     )
   })
 
-
   output$vb_w2_obs_pct_in_sites <- renderbs4ValueBox({
     bs4ValueBox(
       value = tags$h3(req(pct_w2_enc_in_sites())),
@@ -604,35 +597,24 @@ app_server <- function(input, output, session) {
     )
   })
 
-  # Col loc/place/obs select
   selected_place <- reactive({
     req(input$w2_plc)
     req(w2_data())$sites %>% dplyr::filter(code == input$w2_plc)
   })
 
-  output$vb_w2_plc_lat <- renderbs4ValueBox({
+  output$vb_w2_plc_lat_lon <- renderbs4ValueBox({
     req(selected_place())
+    lat <- round(req(selected_place())$site_latitude, 5)
+    lon <- round(req(selected_place())$site_longitude, 5)
     bs4ValueBox(
-      value = tags$h3(round(req(selected_place())$site_latitude, 5)),
-      subtitle = "W2 Site Lat",
+      value = tags$h3(glue::glue("Lat {lat} -- Lon {lon}")),
+      subtitle = "W2 Site Coordinates",
       color = "navy",
       gradient = TRUE,
       icon = icon("crosshairs")
     )
   })
 
-  output$vb_w2_plc_lon <- renderbs4ValueBox({
-    req(selected_place())
-    bs4ValueBox(
-      value = tags$h3(round(req(selected_place())$site_longitude, 5)),
-      subtitle = "W2 Site Lon",
-      color = "navy",
-      gradient = TRUE,
-      icon = icon("crosshairs")
-    )
-  })
-
-  # Col map
   output$map_w2_obs <- leaflet::renderLeaflet({
     if (
       (!is.null(input$w2_loc) && input$w2_loc != "") |
@@ -652,7 +634,6 @@ app_server <- function(input, output, session) {
     }
   })
 
-  # Row tabset tables
   output$impossible_coords <- reactable::renderReactable({
     reactable::reactable(
       req(invalid_coords()),

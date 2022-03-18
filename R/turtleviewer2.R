@@ -19,6 +19,11 @@ utils::globalVariables(
     "site_longitude",
     "sites",
     "location_code",
-    "site_name"
+    "site_name",
+    "calendar_date_awst",
+    "cause_of_death",
+    "n",
+    "season",
+    "taxon"
   )
 )
