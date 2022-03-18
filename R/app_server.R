@@ -604,13 +604,22 @@ app_server <- function(input, output, session) {
     req(w2_data())$sites %>% dplyr::filter(code == input$w2_plc)
   })
 
-  output$vb_w2_plc_lat_lon <- renderbs4ValueBox({
-    req(selected_place())
+  output$vb_w2_plc_lat <- renderbs4ValueBox({
     lat <- round(req(selected_place())$site_latitude, 5)
+    bs4ValueBox(
+      value = tags$h4(lat),
+      subtitle = "W2 Site Lat",
+      color = "navy",
+      gradient = TRUE,
+      icon = icon("crosshairs")
+    )
+  })
+
+  output$vb_w2_plc_lon <- renderbs4ValueBox({
     lon <- round(req(selected_place())$site_longitude, 5)
     bs4ValueBox(
-      value = tags$h3(glue::glue("Lat {lat} -- Lon {lon}")),
-      subtitle = "W2 Site Coordinates",
+      value = tags$h4(lon),
+      subtitle = "W2 Site Lon",
       color = "navy",
       gradient = TRUE,
       icon = icon("crosshairs")

@@ -314,7 +314,8 @@ app_ui <- function(request) {
                 uiOutput("flt_w2_data_loc", class = "m-2"),
                 uiOutput("flt_w2_data_plc", class = "m-2"),
                 uiOutput("flt_w2_data_obs", class = "m-2"),
-                bs4ValueBoxOutput("vb_w2_plc_lat_lon", width = 12),
+                bs4ValueBoxOutput("vb_w2_plc_lat", width = 12),
+                bs4ValueBoxOutput("vb_w2_plc_lon", width = 12),
                 title = "Filter WAMTRAM 2 Observations",
                 width = 4
               ),
