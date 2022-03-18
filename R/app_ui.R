@@ -111,7 +111,7 @@ app_ui <- function(request) {
                 fluidRow(
                   uiOutput("flt_wastd_areas", class = "btn btn-xs col-3"),
                   uiOutput("flt_wastd_seasons", class = "btn btn-xs col-3"),
-                  uiOutput("data_download")
+                  uiOutput("btn_download_wastd", class = "btn btn-xs col-3")
                 ),
                 title = "Filter and export Turtle Monitoring Data",
                 width = 12

@@ -397,8 +397,10 @@ app_server <- function(input, output, session) {
       value = tags$h4(req(wastd_data_all())$downloaded_on %>%
         lubridate::with_tz("Australia/Perth")),
       subtitle = HTML(
-        "WAStD data downloaded",
-        # '<a href="" class="btn btn-info">Refresh</a>'
+        "WAStD data updated"
+        # '<button id="export_wastd" type="button" ',
+        # 'class="btn action-button btn-xs btn-outline-danger ml-2">',
+        # "Download</button>",
       ),
       color = "navy",
       gradient = TRUE,
@@ -410,7 +412,7 @@ app_server <- function(input, output, session) {
     bs4ValueBox(
       value = tags$h4(req(w2_data())$downloaded_on %>% lubridate::with_tz("Australia/Perth")),
       subtitle = HTML(
-        "WAMTRAM data downloaded ",
+        "WAMTRAM data updated ",
         '<button id="action_dl_w2_data" type="button" ',
         'class="btn action-button btn-xs btn-outline-warning ml-2">',
         "Refresh</button>"
@@ -425,7 +427,7 @@ app_server <- function(input, output, session) {
     bs4ValueBox(
       value = tags$h4(req(wastd_sites())$downloaded_on %>% lubridate::with_tz("Australia/Perth")),
       subtitle = HTML(
-        "WAStD sites downloaded ",
+        "WAStD sites updated ",
         '<button id="action_dl_wastd_sites" type="button" ',
         'class="btn action-button btn-xs btn-outline-warning ml-2">',
         "Refresh</button>"
@@ -686,7 +688,7 @@ app_server <- function(input, output, session) {
   })
 
   # Download all the goodies --------------------------------------------------#
-  output$download_zip <- downloadHandler(
+  output$export_wastd <- downloadHandler(
     filename = function() {
       glue::glue(
         "{wastd_data()$downloaded_on} {input$sel_wastd_area} turtle data.zip"
@@ -694,23 +696,23 @@ app_server <- function(input, output, session) {
         stringr::str_replace_all(":", "-")
     },
     content = function(file) {
-      owd <- tempdir()
+      out <- fs::path(tempdir(), "wastd_export")
 
       req(wastd_data()) %>%
-        wastdr::export_wastd_turtledata(outdir=owd, zip = FALSE)
+        wastdr::export_wastd_turtledata(outdir=out, zip = FALSE)
 
       # save maps, plots, tables here
 
-      utils::zip(file, fs::dir_ls(owd))
+      utils::zip(file, fs::dir_ls(out))
     },
     contentType = "application/zip"
   )
 
-  output$data_download <- renderUI({
+  output$btn_download_wastd <- renderUI({
     shiny::need(wastd_data(), message = "Loading data...")
 
     downloadButton(
-      "download_zip",
+      "export_wastd",
       glue::glue("Download WAStD data"),
       class = "dl-data btn btn-danger",
       title = "Download currently selected WAStD data",
