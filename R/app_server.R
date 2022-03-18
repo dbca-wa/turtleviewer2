@@ -5,6 +5,7 @@
 #' @importFrom shiny reactiveFileReader reactive observe observeEvent renderUI
 #'  selectInput textInput req parseQueryString updateSelectInput renderText HTML
 #'  dateRangeInput downloadButton downloadHandler
+#' @importFrom stringr str_replace_all
 #' @import bs4Dash
 #' @noRd
 app_server <- function(input, output, session) {
