@@ -135,7 +135,9 @@ app_server <- function(input, output, session) {
   # Data filter UI elements ---------------------------------------------------#
   #
 
-  areas <- reactive({req(wastd_data_all())$areas$area_name})
+  areas <- reactive({
+    req(wastd_data_all())$areas$area_name
+  })
 
   output$flt_wastd_areas <- renderUI({
     selectInput(
@@ -145,7 +147,9 @@ app_server <- function(input, output, session) {
     )
   })
 
-  seasons <- reactive({sort(unique(req(wastd_data())$animals$season))})
+  seasons <- reactive({
+    sort(unique(req(wastd_data())$animals$season))
+  })
 
   output$flt_wastd_seasons <- renderUI({
     selectInput(
@@ -181,7 +185,6 @@ app_server <- function(input, output, session) {
 
     # TODO filter by seasons
     # wastdr::filter_wastd_season() to accept start_season, end_season
-
   })
 
   wastd_emergences_area <- reactive({
@@ -393,9 +396,10 @@ app_server <- function(input, output, session) {
     bs4ValueBox(
       value = tags$h4(req(wastd_data_all())$downloaded_on %>%
         lubridate::with_tz("Australia/Perth")),
-      subtitle = HTML('WAStD data downloaded',
-                      # '<a href="" class="btn btn-info">Refresh</a>'
-                      ),
+      subtitle = HTML(
+        "WAStD data downloaded",
+        # '<a href="" class="btn btn-info">Refresh</a>'
+      ),
       color = "navy",
       gradient = TRUE,
       icon = icon("download")
@@ -406,10 +410,11 @@ app_server <- function(input, output, session) {
     bs4ValueBox(
       value = tags$h4(req(w2_data())$downloaded_on %>% lubridate::with_tz("Australia/Perth")),
       subtitle = HTML(
-        'WAMTRAM data downloaded ',
+        "WAMTRAM data downloaded ",
         '<button id="action_dl_w2_data" type="button" ',
         'class="btn action-button btn-xs btn-outline-warning ml-2">',
-        'Refresh</button>'),
+        "Refresh</button>"
+      ),
       color = "navy",
       gradient = TRUE,
       icon = icon("download")
@@ -420,10 +425,11 @@ app_server <- function(input, output, session) {
     bs4ValueBox(
       value = tags$h4(req(wastd_sites())$downloaded_on %>% lubridate::with_tz("Australia/Perth")),
       subtitle = HTML(
-        'WAStD sites downloaded ',
+        "WAStD sites downloaded ",
         '<button id="action_dl_wastd_sites" type="button" ',
         'class="btn action-button btn-xs btn-outline-warning ml-2">',
-        'Refresh</button>'),
+        "Refresh</button>"
+      ),
       color = "navy",
       gradient = TRUE,
       icon = icon("download")

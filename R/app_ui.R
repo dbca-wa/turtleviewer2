@@ -73,7 +73,7 @@ app_ui <- function(request) {
             tabName = "tab_incidents",
             fluidRow(
               bs4Card(
-                uiOutput("flt_mfi_daterange", class="col-3"),
+                uiOutput("flt_mfi_daterange", class = "col-3"),
                 title = "Filter and export Marine Fauna Incident Data",
                 width = 12,
                 id = "box_mfi_filter"
