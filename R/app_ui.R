@@ -108,20 +108,10 @@ app_ui <- function(request) {
                   bs4ValueBoxOutput("sites_dl_on", width = 3),
                   bs4ValueBoxOutput("w2_dl_on", width = 3)
                 ),
-
-                # # Download button: All Data
-                # bs4Dash::actionButton(
-                #   "action_export_data",
-                #   "Download data",
-                #   status = "danger",
-                #   outline = TRUE,
-                #   size = "xs",
-                #   class = "btn btn-xs m-1"
-                # )
-
                 fluidRow(
                   uiOutput("flt_wastd_areas", class = "btn btn-xs col-3"),
-                  uiOutput("flt_wastd_seasons", class = "btn btn-xs col-3")
+                  uiOutput("flt_wastd_seasons", class = "btn btn-xs col-3"),
+                  uiOutput("data_download")
                 ),
                 title = "Filter and export Turtle Monitoring Data",
                 width = 12

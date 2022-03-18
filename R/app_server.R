@@ -4,7 +4,7 @@
 #'     DO NOT REMOVE.
 #' @importFrom shiny reactiveFileReader reactive observe observeEvent renderUI
 #'  selectInput textInput req parseQueryString updateSelectInput renderText HTML
-#'  dateRangeInput
+#'  dateRangeInput downloadButton downloadHandler
 #' @import bs4Dash
 #' @noRd
 app_server <- function(input, output, session) {
@@ -685,5 +685,37 @@ app_server <- function(input, output, session) {
     )
   })
 
+  # Download all the goodies --------------------------------------------------#
+  output$download_zip <- downloadHandler(
+    filename = function() {
+      glue::glue(
+        "{wastd_data()$downloaded_on} {input$sel_wastd_area} turtle data.zip"
+      ) %>%
+        stringr::str_replace_all(":", "-")
+    },
+    content = function(file) {
+      owd <- tempdir()
+
+      req(wastd_data()) %>%
+        wastdr::export_wastd_turtledata(outdir=owd, zip = FALSE)
+
+      # save maps, plots, tables here
+
+      utils::zip(file, fs::dir_ls(owd))
+    },
+    contentType = "application/zip"
+  )
+
+  output$data_download <- renderUI({
+    shiny::need(wastd_data(), message = "Loading data...")
+
+    downloadButton(
+      "download_zip",
+      glue::glue("Download WAStD data"),
+      class = "dl-data btn btn-danger",
+      title = "Download currently selected WAStD data",
+      icon = icon("download")
+    )
+  })
   # /outputs ------------------------------------------------------------------#
 }
