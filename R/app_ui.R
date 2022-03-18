@@ -118,6 +118,7 @@ app_ui <- function(request) {
                 #   size = "xs",
                 #   class = "btn btn-xs m-1"
                 # )
+
                 fluidRow(
                   uiOutput("flt_wastd_areas", class = "btn btn-xs col-3"),
                   uiOutput("flt_wastd_seasons", class = "btn btn-xs col-3")

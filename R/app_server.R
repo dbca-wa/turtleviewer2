@@ -134,31 +134,28 @@ app_server <- function(input, output, session) {
 
   # Data filter UI elements ---------------------------------------------------#
   #
-  # WAStD Localities
+
+  areas <- reactive({req(wastd_data_all())$areas$area_name})
+
   output$flt_wastd_areas <- renderUI({
     selectInput(
       "sel_wastd_area",
-      label = "Programs / Locations",
-      choices = c(
-        "Select a program",
-        req(wastd_data_all())$areas$area_name,
-        "All turtle programs",
-        "Other"
-      )
+      label = "Monitoring Programs / Locations",
+      choices = c("Select a program", areas(), "All turtle programs", "Other")
     )
   })
 
+  seasons <- reactive({sort(unique(req(wastd_data())$animals$season))})
+
   output$flt_wastd_seasons <- renderUI({
-    seasons <- sort(unique(req(wastd_data_all())$tracks$season))
     selectInput(
       "sel_wastd_seasons",
       label = "Seasons (coming soon)",
       multiple = TRUE,
-      selected = seasons,
-      choices = seasons
+      selected = seasons(),
+      choices = seasons()
     )
   })
-
 
   # Make WAStD Area selections bookmarkable via query parameter "site"
   observe({
@@ -334,7 +331,6 @@ app_server <- function(input, output, session) {
     if (is.null(input$mfi_daterange[1])) {
       req(wastd_data_all()$animals)
     } else {
-      print(input$mfi_daterange)
       mfi_data_all() %>%
         dplyr::filter(
           calendar_date_awst >= input$mfi_daterange[1],
@@ -344,7 +340,7 @@ app_server <- function(input, output, session) {
   })
 
   output$mfi_map <- leaflet::renderLeaflet({
-    if (is.null(mfi_data())) {
+    if (is.null(input$mfi_daterange[1])) {
       wastdr::leaflet_basemap()
     } else {
       req(mfi_data()) %>%
@@ -358,7 +354,7 @@ app_server <- function(input, output, session) {
       dplyr::tally() %>%
       dplyr::ungroup() %>%
       dplyr::rename(
-        `Season (FY)` = season,
+        `Season (FY start)` = season,
         `Taxonomic Group` = taxon,
         `Incident type` = cause_of_death,
         `Tally` = n
