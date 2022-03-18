@@ -23,7 +23,6 @@ usethis::edit_file("inst/CITATION")
 
 # Build to load new package version. Git commit, tag, and push.
 devtools::document()
-devtools::build()
 v <- packageVersion("turtleviewer2")
 system(glue::glue("git tag -a v{v} -m 'v{v}'"))
 system(glue::glue("git push && git push --tags"))
