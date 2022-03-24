@@ -130,15 +130,15 @@ app_ui <- function(request) {
               tabBox(
                 tabPanel(
                   title = "Emergences and Processing",
-                  plotly::plotlyOutput("plt_emergences"),
+                  plotly::plotlyOutput("plt_emergences", height = "600px"),
                   reactable::reactableOutput("tbl_total_emergences_proc_mis_area"),
                   reactable::reactableOutput("tbl_total_emergences_proc_mis_site"),
                   icon = icon("arrow-up")
                 ),
                 tabPanel(
                   title = "Nesting Success",
-                  plotly::plotlyOutput("plt_emergences_nesting_abs"),
-                  plotly::plotlyOutput("plt_emergences_nesting_rel"),
+                  plotly::plotlyOutput("plt_emergences_nesting_abs", height = "600px"),
+                  plotly::plotlyOutput("plt_emergences_nesting_rel", height = "600px"),
                   reactable::reactableOutput("tbl_total_emergences_nesting_area_season"),
                   reactable::reactableOutput("tbl_total_emergences_nesting_area_day"),
                   icon = icon("thumbs-up")
@@ -148,49 +148,27 @@ app_ui <- function(request) {
                   shiny::tags$p("Coming soon"),
                   # reactable::reactableOutput("tbl_processed_turtles_new_res_rem")
                   # shiny::plotOutput("plt_processed_turtles_new_res_rem")
-                  icon = icon("eye")
+                  icon = icon("redo")
                 ),
 
                 tabPanel(
                   title = "Hatching and Emergence Success",
-                  shiny::tags$p("Coming soon"),
-                  # fluidRow(
-                  #   boxLayout(
-                  #     # bs4ValueBoxOutput("vb_hs", width = 3),
-                  #     # bs4ValueBoxOutput("vb_es", width = 3),
-                  #     type = "group"
-                  #   )
-                  # ),
-                  # fluidRow(
-                  # tabBox(
-                  #   tabPanel(
-                  #     title = "Hatching and Emergence Success",
-                  #     # shiny::plotOutput("")
-                  #     # reactable::reactableOutput("")
-                  #     icon = icon("table")
-                  #   ),
-                  #   # tabPanel(
-                  #   #   title = "Hatching and Emergence Success timeseries",
-                  #   #   # reactable::reactableOutput("")
-                  #   #   # shiny::plotOutput("")
-                  #   #   icon = icon("chart-area")
-                  #   # ),
-                  #   width = 12,
-                  #   maximizable = TRUE
-                  # )
-                  # )
+                  plotly::plotlyOutput("plt_hatching_success", height = "600px"),
+                  plotly::plotlyOutput("plt_emergence_success", height = "600px"),
+                  reactable::reactableOutput("tbl_hatching_success"),
                   icon = icon("thumbs-up")
                 ),
                 tabPanel(
                   title = "Hatchling Misorientation",
                   shiny::tags$p("Coming soon"),
                   # fan angles
-                  icon = icon("eye")
+                  icon = icon("lightbulb")
                 ),
                 tabPanel(
                   title = "Disturbance and Predation",
-                  shiny::tags$p("Coming soon"),
-                  icon = icon("thumbs-up")
+                  plotly::plotlyOutput("plt_dist", height = "600px"),
+                  reactable::reactableOutput("tbl_dist"),
+                  icon = icon("bolt")
                 ),
 
                 width = 12,

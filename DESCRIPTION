@@ -31,7 +31,7 @@ Imports:
     stringr (>= 1.4.0),
     plotly (>= 4.10.0),
     waiter,
-    wastdr (>= 0.8.15)
+    wastdr (>= 0.8.17)
 Suggests: 
     spelling,
     testthat (>= 3.0.0)

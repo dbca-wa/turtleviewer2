@@ -204,7 +204,19 @@ app_server <- function(input, output, session) {
     req(wastd_data()) %>% wastdr::nesting_success_per_area_day_species()
   })
 
+  wastd_hatching_emergence_success_area <- reactive({
+    req(wastd_data())$nest_excavations %>%
+      wastdr::hatching_emergence_success_area()
+  })
 
+  # wastd_hatching_emergence_success_site <- reactive({
+  #   req(wastd_data())$nest_excavations %>%
+  #     wastdr::hatching_emergence_success_site()
+  # })
+
+  wastd_dist <- reactive({
+    req(wastd_data())$nest_dist %>% wastdr::disturbance_by_season()
+  })
 
   # Derived WAMTRAM data ------------------------------------------------------#
   enc_by_sites <- reactive({
@@ -508,20 +520,56 @@ app_server <- function(input, output, session) {
       defaultColDef = reactable::colDef(html = TRUE)
     )
   })
-  #
-  # emergences split by processing status
+
   # emergences split by sighting status: new, resight, remigrant
   # internesting interval
   # clutch frequency
   # morphometrics
   # injuries
+  #
+  # tabPanel HS/ES ------------------------------------------------------------#
+  # req(wastd_hatching_emergence_success_area())
+  # req(wastd_hatching_emergence_success_site())
 
-  # Tab WAStD - Hatching ------------------------------------------------------#
-  # hs/es
-  #
-  # Tab WAStD - Disturbance ---------------------------------------------------#
-  # general and nest dist
-  #
+  output$plt_hatching_success <- plotly::renderPlotly({
+    req(wastd_data()) %>%
+      wastdr::ggplot_hatching_success() %>%
+      plotly::ggplotly()
+  })
+
+  output$plt_emergence_success <- plotly::renderPlotly({
+    req(wastd_data()) %>%
+      wastdr::ggplot_emergence_success() %>%
+      plotly::ggplotly()
+  })
+
+  output$tbl_hatching_success <- reactable::renderReactable({
+    reactable::reactable(
+      req(wastd_hatching_emergence_success_area()),
+      sortable = TRUE,
+      filterable = TRUE,
+      searchable = TRUE,
+      defaultColDef = reactable::colDef(html = TRUE)
+    )
+  })
+
+  # tabPanel Disturbance ------------------------------------------------------#
+  output$plt_dist <- plotly::renderPlotly({
+    req(wastd_data()) %>%
+      wastdr::ggplot_disturbance_by_season() %>%
+      plotly::ggplotly()
+  })
+
+  output$tbl_dist <- reactable::renderReactable({
+    reactable::reactable(
+      req(wastd_dist()),
+      sortable = TRUE,
+      filterable = TRUE,
+      searchable = TRUE,
+      defaultColDef = reactable::colDef(html = TRUE)
+    )
+  })
+
   # Tab WAMTRAM - Places ------------------------------------------------------#
   output$vb_place_loc_rate <- renderbs4ValueBox({
     x <- round(100 * (nrow(req(located_places())) / nrow(req(w2_data())$sites)), 0)
@@ -746,7 +794,7 @@ app_server <- function(input, output, session) {
       req(wastd_data()) %>%
         wastdr::export_wastd_turtledata(outdir=out, zip = FALSE)
 
-      # Derived data summaries, figures, maps
+      # Derived data summaries
       req(wastd_emergences_area()) %>%
         readr::write_csv(
           file = fs::path(out, "emergences_per_area_season_species.csv"))
@@ -763,10 +811,19 @@ app_server <- function(input, output, session) {
         readr::write_csv(
           file = fs::path(out, "nesting_per_area_day_species.csv"))
 
-      # TODO: save ggplot / plotly
+      req(wastd_hatching_emergence_success_area()) %>%
+        readr::write_csv(
+          file = fs::path(out, "hatching_emergence_success.csv"))
+
+      req(wastd_dist()) %>%
+        readr::write_csv(
+          file = fs::path(out, "disturbance_predation.csv"))
+
+      # Figures: save ggplot / plotly (refactor ggplot/plotly as reactive)
       # plt_emergences
       # plt_emergences_nesting_abs
       # plt_emergences_nesting_rel
+      # plt_dist
 
 
       utils::zip(file, fs::dir_ls(out))
