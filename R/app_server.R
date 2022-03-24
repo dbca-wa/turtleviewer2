@@ -196,6 +196,16 @@ app_server <- function(input, output, session) {
     req(wastd_data()) %>% wastdr::total_emergences_per_site_season_species()
   })
 
+  wastd_nesting_area_season <- reactive({
+    req(wastd_data()) %>% wastdr::nesting_success_per_area_season_species()
+  })
+
+  wastd_nesting_area_day <- reactive({
+    req(wastd_data()) %>% wastdr::nesting_success_per_area_day_species()
+  })
+
+
+
   # Derived WAMTRAM data ------------------------------------------------------#
   enc_by_sites <- reactive({
     req(w2_data())$enc %>%
@@ -439,10 +449,11 @@ app_server <- function(input, output, session) {
     )
   })
 
+  # TabPanel Emergences and Processing ----------------------------------------#
   output$plt_emergences <- plotly::renderPlotly({
     req(wastd_emergences_area()) %>%
       wastdr::ggplot_total_emergences_per_area_season_species() %>%
-      wastdr::plotly_total_emergences_per_area_season_species()
+      plotly::ggplotly()
   })
 
   output$tbl_total_emergences_proc_mis_area <- reactable::renderReactable({
@@ -465,7 +476,39 @@ app_server <- function(input, output, session) {
     )
   })
 
-  # emergences split by nesting success
+  # TabPanel Nesting Success --------------------------------------------------#
+  output$plt_emergences_nesting_abs <- plotly::renderPlotly({
+    req(wastd_nesting_area_season()) %>%
+      wastdr::ggplot_nesting_success_per_area_season_species() %>%
+      plotly::ggplotly()
+  })
+
+  output$plt_emergences_nesting_rel <- plotly::renderPlotly({
+    req(wastd_nesting_area_season()) %>%
+      wastdr::ggplot_nesting_success_per_area_season_species_pct() %>%
+      plotly::ggplotly()
+  })
+
+  output$tbl_total_emergences_nesting_area_season <- reactable::renderReactable({
+    reactable::reactable(
+      req(wastd_nesting_area_season()),
+      sortable = TRUE,
+      filterable = TRUE,
+      searchable = TRUE,
+      defaultColDef = reactable::colDef(html = TRUE)
+    )
+  })
+
+  output$tbl_total_emergences_nesting_area_day <- reactable::renderReactable({
+    reactable::reactable(
+      req(wastd_nesting_area_day()),
+      sortable = TRUE,
+      filterable = TRUE,
+      searchable = TRUE,
+      defaultColDef = reactable::colDef(html = TRUE)
+    )
+  })
+  #
   # emergences split by processing status
   # emergences split by sighting status: new, resight, remigrant
   # internesting interval
@@ -699,10 +742,32 @@ app_server <- function(input, output, session) {
     content = function(file) {
       out <- fs::path(tempdir(), "wastd_export")
 
+      # The main show: WAStD data export
       req(wastd_data()) %>%
         wastdr::export_wastd_turtledata(outdir=out, zip = FALSE)
 
-      # save maps, plots, tables here
+      # Derived data summaries, figures, maps
+      req(wastd_emergences_area()) %>%
+        readr::write_csv(
+          file = fs::path(out, "emergences_per_area_season_species.csv"))
+
+      req(wastd_emergences_site()) %>%
+        readr::write_csv(
+          file = fs::path(out, "emergences_per_site_season_species.csv"))
+
+      req(wastd_nesting_area_season()) %>%
+        readr::write_csv(
+          file = fs::path(out, "nesting_per_area_season_species.csv"))
+
+      req(wastd_nesting_area_day()) %>%
+        readr::write_csv(
+          file = fs::path(out, "nesting_per_area_day_species.csv"))
+
+      # TODO: save ggplot / plotly
+      # plt_emergences
+      # plt_emergences_nesting_abs
+      # plt_emergences_nesting_rel
+
 
       utils::zip(file, fs::dir_ls(out))
     },

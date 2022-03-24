@@ -129,133 +129,76 @@ app_ui <- function(request) {
             fluidRow(
               tabBox(
                 tabPanel(
-                  title = "Total emergences (Area)",
+                  title = "Emergences and Processing",
                   plotly::plotlyOutput("plt_emergences"),
-                  icon = icon("arrow-up")
-                ),
-                tabPanel(
-                  title = "Total emergences (Area)",
                   reactable::reactableOutput("tbl_total_emergences_proc_mis_area"),
-                  # shiny::plotOutput("plt_total_emergences_proc_mis_area"),
-                  icon = icon("arrow-up")
-                ),
-                tabPanel(
-                  title = "Total emergences (Site)",
                   reactable::reactableOutput("tbl_total_emergences_proc_mis_site"),
-                  # shiny::plotOutput("plt_total_emergences_proc_mis_site"),
                   icon = icon("arrow-up")
                 ),
                 tabPanel(
-                  title = "Processed turtles",
+                  title = "Nesting Success",
+                  plotly::plotlyOutput("plt_emergences_nesting_abs"),
+                  plotly::plotlyOutput("plt_emergences_nesting_rel"),
+                  reactable::reactableOutput("tbl_total_emergences_nesting_area_season"),
+                  reactable::reactableOutput("tbl_total_emergences_nesting_area_day"),
+                  icon = icon("thumbs-up")
+                ),
+                tabPanel(
+                  title = "Recaptures",
+                  shiny::tags$p("Coming soon"),
                   # reactable::reactableOutput("tbl_processed_turtles_new_res_rem")
                   # shiny::plotOutput("plt_processed_turtles_new_res_rem")
                   icon = icon("eye")
                 ),
+
                 tabPanel(
-                  title = "Nesting success",
-                  #
-                  # We calculate the **nesting success** as the fraction of confirmed nests
-                  # (turtles observed laying during tagging plus "successful crawl" turtle
-                  #   tracks with what is believed by the observer to be a nest) over the
-                  # total number of nesting attempts (emergences).
-                  # As nesting success are counted:
-                  #
-                  # * Tagging records with `clutch_completed` status
-                  #
-                  # * "Y" (confirmed completed clutch).
-                  #
-                  # * Tracks with `nest_type`
-                  #
-                  # * "successful-crawl" (believed to be a nest by the observer).
-                  #
-                  # As unknowns are counted:
-                  #
-                  #   * Tagging records with `clutch_completed` status
-                  #
-                  # * "P" (possible clutch, but not certain enough to confirm),
-                  # * "U" (uncertain about clutch), and
-                  # * "D" (did not check).
-                  #
-                  # * Tracks with `nest_type`
-                  #
-                  # * "track-not-assessed" (did not check for nest), and
-                  # * "track-unsure" (checked but unsure).
-                  #
-                  # As non nesting are counted:
-                  #
-                  #   * Tagging records with `clutch_completed` status
-                  #
-                  # * "N" (confirmed no).
-                  #
-                  # * Tracks with `nest_type`
-                  #
-                  # * "false-crawl" (believed not to be a nest by the observer).
-                  #
-                  # When calculating the nesting success as fraction of successful over total nesting,
-                  # we calculate three versions of nesting success.
-                  #
-                  # * The "pessimistic" success rate considers all unknowns as non nesting.
-                  # * The "optimistic" success rate considers all unknowns as successful nesting.
-                  # * The "split" success rate considers exactly half of all unknowns as successful nesting.
-                  #
-                  # Uncertain track count records include cases where the presence of a nest is unsure or not
-                  # checked for. The tagging records cater for a range of unknowns, which again could
-                  # well be successfully completed clutches.
-                  #
-                  # The **data** are biased (both ways) by the observers' individual ability to
-                  # recognize a nest, and the opportunity to observe the clutch up to its successful
-                  # end.
-                  #
-                  # Nesting success measured during night tagging can be assumed to be lowered by
-                  # the disruption through monitoring disturbance.
-                  # * Nesting success (optimistic) = yes + unsure / yes + unsure + no
-                  # * Nesting success is lower during tagging because tagging disrupts nesting
-                  # * Morning surveys of tracks with/without nests don't disturb nesting process, but
-                  #   biased by observer capability to determine nest presence (barring excavation).
-                  #
-                  # reactable::reactableOutput("tbl_nesting_success")
-                  # shiny::plotOutput("plt_nesting_success")
+                  title = "Hatching and Emergence Success",
+                  shiny::tags$p("Coming soon"),
+                  # fluidRow(
+                  #   boxLayout(
+                  #     # bs4ValueBoxOutput("vb_hs", width = 3),
+                  #     # bs4ValueBoxOutput("vb_es", width = 3),
+                  #     type = "group"
+                  #   )
+                  # ),
+                  # fluidRow(
+                  # tabBox(
+                  #   tabPanel(
+                  #     title = "Hatching and Emergence Success",
+                  #     # shiny::plotOutput("")
+                  #     # reactable::reactableOutput("")
+                  #     icon = icon("table")
+                  #   ),
+                  #   # tabPanel(
+                  #   #   title = "Hatching and Emergence Success timeseries",
+                  #   #   # reactable::reactableOutput("")
+                  #   #   # shiny::plotOutput("")
+                  #   #   icon = icon("chart-area")
+                  #   # ),
+                  #   width = 12,
+                  #   maximizable = TRUE
+                  # )
+                  # )
                   icon = icon("thumbs-up")
                 ),
+                tabPanel(
+                  title = "Hatchling Misorientation",
+                  shiny::tags$p("Coming soon"),
+                  # fan angles
+                  icon = icon("eye")
+                ),
+                tabPanel(
+                  title = "Disturbance and Predation",
+                  shiny::tags$p("Coming soon"),
+                  icon = icon("thumbs-up")
+                ),
+
                 width = 12,
                 maximizable = TRUE
               )
             )
           ),
-          tabItem(
-            tabName = "tab_turtle_hatching",
-            shiny::tags$h3("Hatching and emergence success")
-            # fluidRow(
-            #   boxLayout(
-            #     # bs4ValueBoxOutput("vb_hs", width = 3),
-            #     # bs4ValueBoxOutput("vb_es", width = 3),
-            #     type = "group"
-            #   )
-            # ),
-            # fluidRow(
-            # tabBox(
-            #   tabPanel(
-            #     title = "Hatching and Emergence Success",
-            #     # shiny::plotOutput("")
-            #     # reactable::reactableOutput("")
-            #     icon = icon("table")
-            #   ),
-            #   # tabPanel(
-            #   #   title = "Hatching and Emergence Success timeseries",
-            #   #   # reactable::reactableOutput("")
-            #   #   # shiny::plotOutput("")
-            #   #   icon = icon("chart-area")
-            #   # ),
-            #   width = 12,
-            #   maximizable = TRUE
-            # )
-            # )
-          ),
-          tabItem(
-            tabName = "tab_disturbance",
-            shiny::tags$h3("Map of disturbances"),
-            shiny::tags$h3("Disturbances by season and cause")
-          ),
+          # WAMTRAM Places
           tabItem(
             tabName = "tab_w2_places",
             boxLayout(
@@ -291,6 +234,7 @@ app_ui <- function(request) {
               )
             )
           ),
+          # WAMTRAM Observations
           tabItem(
             tabName = "tab_w2_observations",
             fluidRow(
