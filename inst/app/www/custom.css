@@ -6,16 +6,23 @@
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
+}
 
+nav.navbar {
+    background: url('green_hatchling.jpg') no-repeat center center fixed;
 }
 
 /* Opacity for cards */
 .card, .sidebar {opacity: 0.8;}
 .card:hover, .sidebar:hover {opacity: 1.0;}
 
+/* Data currency container */
+.pull-down {position: absolute; bottom: 0;}
+
 /* Fullscreen maps */
 /* html, body {width:100%; height:100%} */
 
 /* Maps */
-.content-wrapper>.content {padding:0px; !important;}
-#mfi_map {height: calc(50vh) !important;}
+/* .content-wrapper>.content {padding:0px; !important;}
+#mfi_map {height: calc(90vh) !important;}
+*/

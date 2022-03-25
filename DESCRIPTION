@@ -32,7 +32,8 @@ Imports:
     plotly (>= 4.10.0),
     waiter,
     wastdr (>= 0.8.18),
-    readr
+    readr,
+    shinyWidgets (>= 0.6.4)
 Suggests: 
     spelling,
     testthat (>= 3.0.0)

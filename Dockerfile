@@ -29,6 +29,8 @@ RUN Rscript -e 'remotes::install_version("odbc",upgrade="never", version = "1.3.
 RUN Rscript -e 'remotes::install_version("reactable",upgrade="never", version = "0.2.3")'
 RUN Rscript -e 'remotes::install_version("waiter",upgrade="never", version = "0.2.5")'
 RUN Rscript -e 'remotes::install_version("plotly",upgrade="never", version = "4.10.0")'
+RUN Rscript -e 'remotes::install_version("shinyWidgets",upgrade="never", version = "0.6.4")'
+
 RUN Rscript -e 'remotes::install_github("Thinkr-open/golem")'
 RUN Rscript -e 'remotes::install_github("RinteRface/bs4Dash")'
 # Unused wastdr dependencies:

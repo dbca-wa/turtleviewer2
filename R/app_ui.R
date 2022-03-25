@@ -22,11 +22,13 @@ app_ui <- function(request) {
           title = "DBCA Marine Data",
           color = "primary",
           href = "https://turtledata.dbca.wa.gov.au/"
-          # image = "www/logo.svg"
+          # image = "www/logo-dbca.png"
         ),
         uiOutput("flt_wastd_areas", class = "btn btn-xs col-3"),
         uiOutput("flt_wastd_seasons", class = "btn btn-xs col-3"),
-        uiOutput("btn_download_wastd", class = "btn btn-xs col-3")
+        uiOutput("btn_download_wastd", class = "btn btn-xs col-3"),
+        compact = TRUE,
+        border = FALSE
       ),
       sidebar = dashboardSidebar(
         sidebarMenu(
@@ -69,11 +71,13 @@ app_ui <- function(request) {
           )
         ),
         # Data currency valueBoxes
-        bs4ValueBoxOutput("odk_imported", width=12),
-        bs4ValueBoxOutput("wastd_dl_on", width=12),
-        bs4ValueBoxOutput("sites_dl_on", width=12),
-        bs4ValueBoxOutput("w2_dl_on", width=12)
-
+        tags$div(
+          bs4ValueBoxOutput("odk_imported", width = 12),
+          bs4ValueBoxOutput("wastd_dl_on", width = 12),
+          bs4ValueBoxOutput("sites_dl_on", width = 12),
+          bs4ValueBoxOutput("w2_dl_on", width = 12),
+          class = "pull-down"
+        )
       ),
       # controlbar = bs4DashControlbar(
       #   tags$h3("Data currency", class="mt-2 ml-2"),
@@ -88,12 +92,18 @@ app_ui <- function(request) {
         tabItems(
           tabItem(
             tabName = "tab_incidents",
-            leaflet::leafletOutput("mfi_map"),
             fluidRow(
-              bs4Card(title = "Incidents by taxonomic group and incident type",
+              bs4Card(
+                title = "Incidents by taxonomic group and incident type",
                 uiOutput("flt_mfi_daterange", class = "col-6"),
-                      reactable::reactableOutput("mfi_summary"),
-                      width=6)
+                reactable::reactableOutput("mfi_summary"),
+                class="mt-2",
+                width = 6
+              ),
+              bs4Card(
+                title = "Incident map",
+                leaflet::leafletOutput("mfi_map", height="calc(80vh)"),
+                width=6)
             )
           ),
           tabItem(
@@ -269,9 +279,8 @@ golem_add_external_resources <- function() {
 
   tags$head(
     favicon(),
-
     bundle_resources(path = app_sys("app/www"), app_title = "WA Turtle Data"),
-    tags$link(rel="stylesheet", type="text/css", href="www/custom.css")
+    tags$link(rel = "stylesheet", type = "text/css", href = "www/custom.css")
     # Add here other external resources
     # for example, you can add shinyalert::useShinyalert())
   )

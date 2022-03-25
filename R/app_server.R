@@ -419,12 +419,7 @@ app_server <- function(input, output, session) {
     bs4ValueBox(
       value = tags$h4(req(wastd_data_all())$downloaded_on %>%
         lubridate::with_tz("Australia/Perth")),
-      subtitle = HTML(
-        "WAStD data updated"
-        # '<button id="export_wastd" type="button" ',
-        # 'class="btn action-button btn-xs btn-outline-danger ml-2">',
-        # "Download</button>",
-      ),
+      subtitle ="WAStD data updated",
       color = "navy",
       gradient = TRUE,
       icon = icon("download")
@@ -434,8 +429,8 @@ app_server <- function(input, output, session) {
   output$w2_dl_on <- renderbs4ValueBox({
     bs4ValueBox(
       value = tags$h4(req(w2_data())$downloaded_on %>% lubridate::with_tz("Australia/Perth")),
-      subtitle = HTML(
-        "WAMTRAM data updated ",
+      subtitle = "WAMTRAM data updated",
+      footer = HTML(
         '<button id="action_dl_w2_data" type="button" ',
         'class="btn action-button btn-xs btn-outline-warning ml-2">',
         "Refresh</button>"
@@ -449,12 +444,10 @@ app_server <- function(input, output, session) {
   output$sites_dl_on <- renderbs4ValueBox({
     bs4ValueBox(
       value = tags$h4(req(wastd_sites())$downloaded_on %>% lubridate::with_tz("Australia/Perth")),
-      subtitle = HTML(
-        "WAStD sites updated ",
-        '<button id="action_dl_wastd_sites" type="button" ',
-        'class="btn action-button btn-xs btn-outline-warning ml-2">',
-        "Refresh</button>"
-      ),
+      subtitle = "WAStD sites updated",
+      footer=HTML('<button id="action_dl_wastd_sites" type="button" ',
+                  'class="btn action-button btn-xs btn-outline-warning ml-2">',
+                  "Refresh</button>"),
       color = "navy",
       gradient = TRUE,
       icon = icon("download")
