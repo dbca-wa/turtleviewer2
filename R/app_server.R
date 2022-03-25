@@ -337,7 +337,7 @@ app_server <- function(input, output, session) {
   # Tab WAStD - Incidents -----------------------------------------------------#
   output$flt_mfi_daterange <- renderUI({
     dateRangeInput("mfi_daterange",
-      label = "Select date range:",
+      label = "Select date range for Incidents:",
       start = "2022-01-01",
       format = "yyyy-mm-dd",
       startview = "year",
