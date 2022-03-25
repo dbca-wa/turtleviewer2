@@ -150,7 +150,6 @@ app_ui <- function(request) {
                   # shiny::plotOutput("plt_processed_turtles_new_res_rem")
                   icon = icon("redo")
                 ),
-
                 tabPanel(
                   title = "Hatching and Emergence Success",
                   plotly::plotlyOutput("plt_hatching_success", height = "600px"),
@@ -170,7 +169,6 @@ app_ui <- function(request) {
                   reactable::reactableOutput("tbl_dist"),
                   icon = icon("bolt")
                 ),
-
                 width = 12,
                 maximizable = TRUE
               )

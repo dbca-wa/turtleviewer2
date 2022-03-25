@@ -792,32 +792,38 @@ app_server <- function(input, output, session) {
 
       # The main show: WAStD data export
       req(wastd_data()) %>%
-        wastdr::export_wastd_turtledata(outdir=out, zip = FALSE)
+        wastdr::export_wastd_turtledata(outdir = out, zip = FALSE)
 
       # Derived data summaries
       req(wastd_emergences_area()) %>%
         readr::write_csv(
-          file = fs::path(out, "emergences_per_area_season_species.csv"))
+          file = fs::path(out, "emergences_per_area_season_species.csv")
+        )
 
       req(wastd_emergences_site()) %>%
         readr::write_csv(
-          file = fs::path(out, "emergences_per_site_season_species.csv"))
+          file = fs::path(out, "emergences_per_site_season_species.csv")
+        )
 
       req(wastd_nesting_area_season()) %>%
         readr::write_csv(
-          file = fs::path(out, "nesting_per_area_season_species.csv"))
+          file = fs::path(out, "nesting_per_area_season_species.csv")
+        )
 
       req(wastd_nesting_area_day()) %>%
         readr::write_csv(
-          file = fs::path(out, "nesting_per_area_day_species.csv"))
+          file = fs::path(out, "nesting_per_area_day_species.csv")
+        )
 
       req(wastd_hatching_emergence_success_area()) %>%
         readr::write_csv(
-          file = fs::path(out, "hatching_emergence_success.csv"))
+          file = fs::path(out, "hatching_emergence_success.csv")
+        )
 
       req(wastd_dist()) %>%
         readr::write_csv(
-          file = fs::path(out, "disturbance_predation.csv"))
+          file = fs::path(out, "disturbance_predation.csv")
+        )
 
       # Figures: save ggplot / plotly (refactor ggplot/plotly as reactive)
       # plt_emergences
