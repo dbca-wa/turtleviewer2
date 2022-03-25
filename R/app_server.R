@@ -143,7 +143,7 @@ app_server <- function(input, output, session) {
   output$flt_wastd_areas <- renderUI({
     selectInput(
       "sel_wastd_area",
-      label = "Monitoring Programs / Locations",
+      label = "WA Turtle Monitoring Locations",
       choices = c("Select a program", areas(), "All turtle programs", "Other")
     )
   })
@@ -155,7 +155,7 @@ app_server <- function(input, output, session) {
   output$flt_wastd_seasons <- renderUI({
     selectInput(
       "sel_wastd_seasons",
-      label = "Seasons (coming soon)",
+      label = "Turtle Nesting Seasons (coming soon)",
       multiple = TRUE,
       selected = seasons(),
       choices = seasons()
@@ -337,7 +337,7 @@ app_server <- function(input, output, session) {
   # Tab WAStD - Incidents -----------------------------------------------------#
   output$flt_mfi_daterange <- renderUI({
     dateRangeInput("mfi_daterange",
-      label = "Select date range for Incidents:",
+      label = "Date range for Incidents",
       start = "2022-01-01",
       format = "yyyy-mm-dd",
       startview = "year",

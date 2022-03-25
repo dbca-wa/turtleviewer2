@@ -24,6 +24,7 @@ app_ui <- function(request) {
           href = "https://turtledata.dbca.wa.gov.au/"
           # image = "www/logo-dbca.png"
         ),
+        uiOutput("flt_mfi_daterange", class = "btn btn-xs col-3"),
         uiOutput("flt_wastd_areas", class = "btn btn-xs col-3"),
         uiOutput("flt_wastd_seasons", class = "btn btn-xs col-3"),
         uiOutput("btn_download_wastd", class = "btn btn-xs col-3"),
@@ -95,7 +96,6 @@ app_ui <- function(request) {
             fluidRow(
               bs4Card(
                 title = "Incidents by taxonomic group and incident type",
-                uiOutput("flt_mfi_daterange", class = "col-6"),
                 reactable::reactableOutput("mfi_summary"),
                 class="mt-2",
                 width = 6
