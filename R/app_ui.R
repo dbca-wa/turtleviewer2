@@ -24,10 +24,10 @@ app_ui <- function(request) {
           href = "https://turtledata.dbca.wa.gov.au/"
           # image = "www/logo-dbca.png"
         ),
-        uiOutput("flt_mfi_daterange", class = "btn btn-xs col-3"),
-        uiOutput("flt_wastd_areas", class = "btn btn-xs col-3"),
-        uiOutput("flt_wastd_seasons", class = "btn btn-xs col-3"),
-        uiOutput("btn_download_wastd", class = "btn btn-xs col-3"),
+        uiOutput("flt_mfi_daterange", class = "btn btn-xs"),
+        uiOutput("flt_wastd_areas", class = "btn btn-xs"),
+        uiOutput("flt_wastd_seasons", class = "btn btn-xs"),
+        uiOutput("btn_download_wastd", class = "btn btn-xs"),
         compact = TRUE,
         border = FALSE
       ),
@@ -70,23 +70,15 @@ app_ui <- function(request) {
               icon = icon("pencil-alt")
             )
           )
-        ),
-        # Data currency valueBoxes
-        tags$div(
-          bs4ValueBoxOutput("odk_imported", width = 12),
-          bs4ValueBoxOutput("wastd_dl_on", width = 12),
-          bs4ValueBoxOutput("sites_dl_on", width = 12),
-          bs4ValueBoxOutput("w2_dl_on", width = 12),
-          class = "pull-down"
         )
       ),
-      # controlbar = bs4DashControlbar(
-      #   tags$h3("Data currency", class="mt-2 ml-2"),
-      #   bs4ValueBoxOutput("odk_imported", width=12),
-      #   bs4ValueBoxOutput("wastd_dl_on", width=12),
-      #   bs4ValueBoxOutput("sites_dl_on", width=12),
-      #   bs4ValueBoxOutput("w2_dl_on", width=12)
-      # ),
+      controlbar = bs4DashControlbar(
+        tags$h3("Data currency", class="mt-2 ml-2"),
+        bs4ValueBoxOutput("odk_imported", width=12),
+        bs4ValueBoxOutput("wastd_dl_on", width=12),
+        bs4ValueBoxOutput("sites_dl_on", width=12),
+        bs4ValueBoxOutput("w2_dl_on", width=12)
+      ),
       body = dashboardBody(
         shinyWidgets::setBackgroundImage(src = "www/green_hatchling.jpg", shinydashboard = FALSE),
         waiter::useWaitress(),
