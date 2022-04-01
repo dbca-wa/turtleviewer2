@@ -31,7 +31,7 @@ Imports:
     stringr (>= 1.4.0),
     plotly (>= 4.10.0),
     waiter,
-    wastdr (>= 0.8.19),
+    wastdr (>= 0.8.20),
     readr,
     shinyWidgets (>= 0.6.4)
 Suggests: 
