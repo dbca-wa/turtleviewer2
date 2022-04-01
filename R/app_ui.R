@@ -130,8 +130,8 @@ app_ui <- function(request) {
                 ),
                 tabPanel(
                   title = "Recaptures",
-                  shiny::tags$p("Coming soon"),
-                  # reactable::reactableOutput("tbl_processed_turtles_new_res_rem")
+                  shiny::tags$p("Caveat: Sighting status classification is in development and possibly wrong. Do not use this table."),
+                  reactable::reactableOutput("tbl_sighting_area_season"),
                   # shiny::plotOutput("plt_processed_turtles_new_res_rem")
                   icon = icon("redo")
                 ),

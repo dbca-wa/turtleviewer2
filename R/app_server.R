@@ -209,6 +209,24 @@ app_server <- function(input, output, session) {
       wastdr::hatching_emergence_success_area()
   })
 
+  wastd_sighting_area_season <- reactive({
+    req(wastd_data()) %>%
+      wastdr::sighting_status_per_area_season_species() %>%
+      dplyr::mutate(
+        species = stringr::str_to_sentence(species) %>%
+          stringr::str_replace("-", " ")
+      ) %>% janitor::clean_names(case = "sentence")
+  })
+
+  wastd_sighting_site_season <- reactive({
+    req(wastd_data()) %>%
+      wastdr::sighting_status_per_site_season_species() %>%
+      dplyr::mutate(
+        species = stringr::str_to_sentence(species) %>%
+          stringr::str_replace("-", " ")
+      ) %>% janitor::clean_names(case = "sentence")
+  })
+
   # wastd_hatching_emergence_success_site <- reactive({
   #   req(wastd_data())$nest_excavations %>%
   #     wastdr::hatching_emergence_success_site()
@@ -514,7 +532,20 @@ app_server <- function(input, output, session) {
     )
   })
 
-  # emergences split by sighting status: new, resight, remigrant
+  # TabPanel Recaptures -------------------------------------------------------#
+  # Emergences split by sighting status: na, new, resighting, remigrant
+  output$tbl_sighting_area_season <- reactable::renderReactable({
+    reactable::reactable(
+      req(wastd_sighting_area_season()),
+      sortable = TRUE,
+      filterable = TRUE,
+      searchable = TRUE,
+      defaultColDef = reactable::colDef(html = TRUE)
+    )
+  })
+  # Same for site: wastd_sighting_site_season()
+
+  #
   # internesting interval
   # clutch frequency
   # morphometrics
@@ -807,6 +838,12 @@ app_server <- function(input, output, session) {
         readr::write_csv(
           file = fs::path(out, "nesting_per_area_day_species.csv")
         )
+
+      # TODO enable once WAStD reconstruct_animal_names is proven correct
+      # req(wastd_sighting_area_season()) %>%
+      #   readr::write_csv(
+      #     file = fs::path(out, "recaptures_per_area_day_species.csv")
+      #   )
 
       req(wastd_hatching_emergence_success_area()) %>%
         readr::write_csv(
