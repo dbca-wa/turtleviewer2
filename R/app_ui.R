@@ -73,11 +73,11 @@ app_ui <- function(request) {
         )
       ),
       controlbar = bs4DashControlbar(
-        tags$h3("Data currency", class="mt-2 ml-2"),
-        bs4ValueBoxOutput("odk_imported", width=12),
-        bs4ValueBoxOutput("wastd_dl_on", width=12),
-        bs4ValueBoxOutput("sites_dl_on", width=12),
-        bs4ValueBoxOutput("w2_dl_on", width=12)
+        tags$h3("Data currency", class = "mt-2 ml-2"),
+        bs4ValueBoxOutput("odk_imported", width = 12),
+        bs4ValueBoxOutput("wastd_dl_on", width = 12),
+        bs4ValueBoxOutput("sites_dl_on", width = 12),
+        bs4ValueBoxOutput("w2_dl_on", width = 12)
       ),
       body = dashboardBody(
         shinyWidgets::setBackgroundImage(src = "www/green_hatchling.jpg", shinydashboard = FALSE),
@@ -89,13 +89,14 @@ app_ui <- function(request) {
               bs4Card(
                 title = "Incidents by taxonomic group and incident type",
                 reactable::reactableOutput("mfi_summary"),
-                class="mt-2",
+                class = "mt-2",
                 width = 6
               ),
               bs4Card(
                 title = "Incident map",
-                leaflet::leafletOutput("mfi_map", height="calc(80vh)"),
-                width=6)
+                leaflet::leafletOutput("mfi_map", height = "calc(80vh)"),
+                width = 6
+              )
             )
           ),
           tabItem(

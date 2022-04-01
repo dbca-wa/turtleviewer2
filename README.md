@@ -62,7 +62,10 @@ internal path `/app/inst`.
 A second Docker image (dbca-wa/etlturtlenesting) runs the ETL jobs to
 periodically refresh the data snapshots from the production databases.
 The ETL process takes close to an hour, the saved snapshots read in
-seconds.
+seconds. The ETL includes import of all digitally captured data from ODK
+Central into WAStD prior to the data export from WAStD, so that all
+digitally captured data is visible in this dashboard within two hours of
+upload.
 
 ## Development
 

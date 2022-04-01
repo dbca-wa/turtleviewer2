@@ -215,7 +215,8 @@ app_server <- function(input, output, session) {
       dplyr::mutate(
         species = stringr::str_to_sentence(species) %>%
           stringr::str_replace("-", " ")
-      ) %>% janitor::clean_names(case = "sentence")
+      ) %>%
+      janitor::clean_names(case = "sentence")
   })
 
   wastd_sighting_site_season <- reactive({
@@ -224,7 +225,8 @@ app_server <- function(input, output, session) {
       dplyr::mutate(
         species = stringr::str_to_sentence(species) %>%
           stringr::str_replace("-", " ")
-      ) %>% janitor::clean_names(case = "sentence")
+      ) %>%
+      janitor::clean_names(case = "sentence")
   })
 
   # wastd_hatching_emergence_success_site <- reactive({
@@ -437,7 +439,7 @@ app_server <- function(input, output, session) {
     bs4ValueBox(
       value = tags$h4(req(wastd_data_all())$downloaded_on %>%
         lubridate::with_tz("Australia/Perth")),
-      subtitle ="WAStD data updated",
+      subtitle = "WAStD data updated",
       color = "navy",
       gradient = TRUE,
       icon = icon("download")
@@ -463,9 +465,11 @@ app_server <- function(input, output, session) {
     bs4ValueBox(
       value = tags$h4(req(wastd_sites())$downloaded_on %>% lubridate::with_tz("Australia/Perth")),
       subtitle = "WAStD sites updated",
-      footer=HTML('<button id="action_dl_wastd_sites" type="button" ',
-                  'class="btn action-button btn-xs btn-outline-warning ml-2">',
-                  "Refresh</button>"),
+      footer = HTML(
+        '<button id="action_dl_wastd_sites" type="button" ',
+        'class="btn action-button btn-xs btn-outline-warning ml-2">',
+        "Refresh</button>"
+      ),
       color = "navy",
       gradient = TRUE,
       icon = icon("download")
