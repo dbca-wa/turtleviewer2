@@ -219,15 +219,21 @@ app_server <- function(input, output, session) {
       janitor::clean_names(case = "sentence")
   })
 
-  wastd_sighting_site_season <- reactive({
+  wastd_sighting_area_season_ggplot <- reactive({
     req(wastd_data()) %>%
-      wastdr::sighting_status_per_site_season_species() %>%
-      dplyr::mutate(
-        species = stringr::str_to_sentence(species) %>%
-          stringr::str_replace("-", " ")
-      ) %>%
-      janitor::clean_names(case = "sentence")
+      wastdr::sighting_status_per_area_season_species() %>%
+      ggplot_sighting_status_per_area_season_species()
   })
+
+  # wastd_sighting_site_season <- reactive({
+  #   req(wastd_data()) %>%
+  #     wastdr::sighting_status_per_site_season_species() %>%
+  #     dplyr::mutate(
+  #       species = stringr::str_to_sentence(species) %>%
+  #         stringr::str_replace("-", " ")
+  #     ) %>%
+  #     janitor::clean_names(case = "sentence")
+  # })
 
   # wastd_hatching_emergence_success_site <- reactive({
   #   req(wastd_data())$nest_excavations %>%
@@ -538,6 +544,11 @@ app_server <- function(input, output, session) {
 
   # TabPanel Recaptures -------------------------------------------------------#
   # Emergences split by sighting status: na, new, resighting, remigrant
+  output$plt_sighting_area_season <- plotly::renderPlotly({
+    req(wastd_sighting_area_season_ggplot()) %>%
+      plotly::ggplotly()
+  })
+
   output$tbl_sighting_area_season <- reactable::renderReactable({
     reactable::reactable(
       req(wastd_sighting_area_season()),

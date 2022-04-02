@@ -131,7 +131,8 @@ app_ui <- function(request) {
                 ),
                 tabPanel(
                   title = "Recaptures",
-                  shiny::tags$p("Caveat: Sighting status classification is in development and possibly wrong. Do not use this table."),
+                  shiny::tags$p("Caveat: Sighting status classification is under QA."),
+                  plotly::plotlyOutput("plt_sighting_area_season", height = "600px"),
                   reactable::reactableOutput("tbl_sighting_area_season"),
                   # shiny::plotOutput("plt_processed_turtles_new_res_rem")
                   icon = icon("redo")
