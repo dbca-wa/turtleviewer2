@@ -125,7 +125,7 @@ usethis::use_version(which="minor")
 usethis::use_version(which="major")
 usethis::edit_file("NEWS.md")
 
-# Build to load new package version. Git commit, tag, and push.
+# Document to load new package version. Git commit, tag, and push.
 devtools::document()
 v <- packageVersion("turtleviewer2")
 system(glue::glue("git tag -a v{v} -m 'v{v}'"))
