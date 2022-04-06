@@ -49,16 +49,6 @@ app_ui <- function(request) {
               tabName = "tab_turtle_nesting",
               icon = icon("home")
             ),
-            # menuSubItem(
-            #   text = "Turtle Hatching",
-            #   tabName = "tab_turtle_hatching",
-            #   icon = icon("egg")
-            # ),
-            # menuSubItem(
-            #   text = "Disturbance",
-            #   tabName = "tab_disturbance",
-            #   icon = icon("bolt")
-            # ),
             menuSubItem(
               text = "WAMTRAM Places",
               tabName = "tab_w2_places",
@@ -146,8 +136,7 @@ app_ui <- function(request) {
                 ),
                 tabPanel(
                   title = "Hatchling Misorientation",
-                  shiny::tags$p("Coming soon"),
-                  # fan angles
+                  leaflet::leafletOutput("map_fanangles"),
                   icon = icon("lightbulb")
                 ),
                 tabPanel(

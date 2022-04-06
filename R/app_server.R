@@ -177,15 +177,15 @@ app_server <- function(input, output, session) {
   wastd_data <- reactive({
     req(input$sel_wastd_area)
 
-    if (input$sel_wastd_area == "Select a program") {
+    if (req(input$sel_wastd_area) == "Select a program") {
       return(NULL)
     } else {
       req(wastd_data_all()) %>%
-        wastdr::filter_wastd_turtledata(input$sel_wastd_area)
+        wastdr::filter_wastd_turtledata(
+          area_name = input$sel_wastd_area,
+          seasons = input$sel_wastd_seasons
+        )
     }
-
-    # TODO filter by seasons
-    # wastdr::filter_wastd_season() to accept start_season, end_season
   })
 
   wastd_emergences_area <- reactive({
@@ -211,18 +211,7 @@ app_server <- function(input, output, session) {
 
   wastd_sighting_area_season <- reactive({
     req(wastd_data()) %>%
-      wastdr::sighting_status_per_area_season_species() %>%
-      dplyr::mutate(
-        species = stringr::str_to_sentence(species) %>%
-          stringr::str_replace("-", " ")
-      ) %>%
-      janitor::clean_names(case = "sentence")
-  })
-
-  wastd_sighting_area_season_ggplot <- reactive({
-    req(wastd_data()) %>%
-      wastdr::sighting_status_per_area_season_species() %>%
-      ggplot_sighting_status_per_area_season_species()
+      wastdr::sighting_status_per_area_season_species()
   })
 
   # wastd_sighting_site_season <- reactive({
@@ -545,7 +534,8 @@ app_server <- function(input, output, session) {
   # TabPanel Recaptures -------------------------------------------------------#
   # Emergences split by sighting status: na, new, resighting, remigrant
   output$plt_sighting_area_season <- plotly::renderPlotly({
-    req(wastd_sighting_area_season_ggplot()) %>%
+    req(wastd_sighting_area_season()) %>%
+      wastdr::ggplot_sighting_status_per_area_season_species() %>%
       plotly::ggplotly()
   })
 
@@ -590,6 +580,15 @@ app_server <- function(input, output, session) {
       searchable = TRUE,
       defaultColDef = reactable::colDef(html = TRUE)
     )
+  })
+
+  # tabPanel Hatchling Misorientation -----------------------------------------#
+  output$map_fanangles <- leaflet::renderLeaflet({
+    if (is.null(wastd_data())) {
+      wastdr::leaflet_basemap()
+    } else {
+      wastdr::map_fanangles(req(wastd_data()))
+    }
   })
 
   # tabPanel Disturbance ------------------------------------------------------#
@@ -855,10 +854,10 @@ app_server <- function(input, output, session) {
         )
 
       # TODO enable once WAStD reconstruct_animal_names is proven correct
-      # req(wastd_sighting_area_season()) %>%
-      #   readr::write_csv(
-      #     file = fs::path(out, "recaptures_per_area_day_species.csv")
-      #   )
+      req(wastd_sighting_area_season()) %>%
+        readr::write_csv(
+          file = fs::path(out, "recaptures_per_area_day_species.csv")
+        )
 
       req(wastd_hatching_emergence_success_area()) %>%
         readr::write_csv(
