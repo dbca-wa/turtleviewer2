@@ -591,6 +591,12 @@ app_server <- function(input, output, session) {
     }
   })
 
+  output$plt_fanangles <- plotly::renderPlotly({
+    req(wastd_data()) %>%
+      wastdr::ggplot_hatchling_misorientation() %>%
+      plotly::ggplotly()
+  })
+
   # tabPanel Disturbance ------------------------------------------------------#
   output$plt_dist <- plotly::renderPlotly({
     req(wastd_data()) %>%

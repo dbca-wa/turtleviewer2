@@ -137,6 +137,7 @@ app_ui <- function(request) {
                 tabPanel(
                   title = "Hatchling Misorientation",
                   leaflet::leafletOutput("map_fanangles"),
+                  plotly::plotlyOutput("plt_fanangles", height = "600px"),
                   icon = icon("lightbulb")
                 ),
                 tabPanel(
