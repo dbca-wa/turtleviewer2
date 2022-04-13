@@ -39,20 +39,19 @@ app_ui <- function(request) {
         sidebarMenu(
           id = "sidebar_menu",
           menuItem(
-            text = "Marine Fauna Incidents",
-            tabName = "tab_incidents",
-            icon = icon("skull-crossbones"),
-            startExpanded = FALSE
-          ),
-          menuItem(
             text = "WA Turtle Monitoring",
             tabName = "tab_wastd",
             startExpanded = TRUE,
             icon = icon("pizza-slice"),
             menuSubItem(
-              text = "Turtle Nesting",
+              text = "Nesting",
               tabName = "tab_turtle_nesting",
               icon = icon("home")
+            ),
+            menuSubItem(
+              text = "Emergence",
+              tabName = "tab_turtle_hatch",
+              icon = icon("thumbs-up")
             ),
             menuSubItem(
               text = "Misorientation",
@@ -60,14 +59,33 @@ app_ui <- function(request) {
               icon = icon("lightbulb")
             ),
             menuSubItem(
-              text = "WAMTRAM Places",
+              text = "Disturbance",
+              tabName = "tab_turtle_dis",
+              icon = icon("bolt")
+            )
+          ),
+          menuItem(
+            text = "Legacy Tagging DB",
+            tabName = "tab_incidents",
+            icon = icon("tags"),
+            menuSubItem(
+              text = "Places",
               tabName = "tab_w2_places",
               icon = icon("map")
             ),
             menuSubItem(
-              text = "WAMTRAM Observations",
+              text = "Observations",
               tabName = "tab_w2_observations",
               icon = icon("pencil-alt")
+            )
+          ),
+          menuItem(
+            text = "Marine Fauna Incidents",
+            icon = icon("skull-crossbones"),
+            menuSubItem(
+              text = "Incidents",
+              tabName = "tab_incidents",
+              icon = icon("map")
             )
           )
         )
@@ -152,21 +170,29 @@ app_ui <- function(request) {
                   # shiny::plotOutput("plt_processed_turtles_new_res_rem")
                   icon = icon("redo")
                 ),
-                tabPanel(
-                  title = "Hatching and Emergence Success",
-                  plotly::plotlyOutput("plt_hatching_success", height = "600px"),
-                  plotly::plotlyOutput("plt_emergence_success", height = "600px"),
-                  reactable::reactableOutput("tbl_hatching_success"),
-                  icon = icon("thumbs-up")
-                ),
-                tabPanel(
-                  title = "Disturbance and Predation",
-                  plotly::plotlyOutput("plt_dist", height = "600px"),
-                  reactable::reactableOutput("tbl_dist"),
-                  icon = icon("bolt")
-                ),
+
                 width = 12,
                 maximizable = TRUE
+              )
+            )
+          ),
+          tabItem(
+            tabName = "tab_turtle_hatch",
+            fluidRow(
+              bs4Card(
+                leaflet::leafletOutput("map_nests"),
+                title = "Hatched Nests",
+                footer = map_footer,
+                width=12
+              )
+            ),
+            fluidRow(
+              bs4Card(
+                title = "Hatching and Emergence Success",
+                plotly::plotlyOutput("plt_hatching_success", height = "600px"),
+                plotly::plotlyOutput("plt_emergence_success", height = "600px"),
+                reactable::reactableOutput("tbl_hatching_success"),
+                width = 12
               )
             )
           ),
@@ -184,6 +210,25 @@ app_ui <- function(request) {
               bs4Card(
                 title = "Misorientation by species and season",
                 plotly::plotlyOutput("plt_fanangles", height = "600px"),
+                width = 12
+              )
+            )
+          ),
+          tabItem(
+            tabName = "tab_turtle_dis",
+            fluidRow(
+              bs4Card(
+                leaflet::leafletOutput("map_dist"),
+                title = "General and Nest Disturbance and Predation",
+                footer = map_footer,
+                width=12
+              )
+            ),
+            fluidRow(
+              bs4Card(
+                title = "General and Nest Disturbance and Predation",
+                plotly::plotlyOutput("plt_dist", height = "600px"),
+                reactable::reactableOutput("tbl_dist"),
                 width = 12
               )
             )

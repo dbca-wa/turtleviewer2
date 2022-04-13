@@ -572,6 +572,15 @@ app_server <- function(input, output, session) {
   # req(wastd_hatching_emergence_success_area())
   # req(wastd_hatching_emergence_success_site())
 
+
+  output$map_nests <- leaflet::renderLeaflet({
+    if (is.null(wastd_data())) {
+      wastdr::leaflet_basemap()
+    } else {
+      wastdr::map_nests(req(wastd_data())$nest_tags)
+    }
+  })
+
   ggplot_hatching_success <- reactive({
     req(wastd_data()) %>% wastdr::ggplot_hatching_success()
   })
@@ -599,6 +608,14 @@ app_server <- function(input, output, session) {
   })
 
   # tabPanel Disturbance ------------------------------------------------------#
+  output$map_dist <- leaflet::renderLeaflet({
+    if (is.null(wastd_data())) {
+      wastdr::leaflet_basemap()
+    } else {
+      wastdr::map_dist(req(wastd_data())$nest_dist)
+    }
+  })
+
   output$plt_dist <- plotly::renderPlotly({
     req(wastd_data()) %>%
       wastdr::ggplot_disturbance_by_season() %>%
