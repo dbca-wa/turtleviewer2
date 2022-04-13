@@ -586,7 +586,7 @@ app_server <- function(input, output, session) {
   })
 
   output$plt_hatching_success <- plotly::renderPlotly({
-     req(ggplot_hatching_success()) %>% plotly::ggplotly()
+    req(ggplot_hatching_success()) %>% plotly::ggplotly()
   })
 
   ggplot_emergence_success <- reactive({

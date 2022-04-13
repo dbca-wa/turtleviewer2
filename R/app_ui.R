@@ -170,7 +170,6 @@ app_ui <- function(request) {
                   # shiny::plotOutput("plt_processed_turtles_new_res_rem")
                   icon = icon("redo")
                 ),
-
                 width = 12,
                 maximizable = TRUE
               )
@@ -183,7 +182,7 @@ app_ui <- function(request) {
                 leaflet::leafletOutput("map_nests"),
                 title = "Hatched Nests",
                 footer = map_footer,
-                width=12
+                width = 12
               )
             ),
             fluidRow(
@@ -203,7 +202,7 @@ app_ui <- function(request) {
                 leaflet::leafletOutput("map_fanangles"),
                 title = "Turtle Hatchling Misorientation at Nest Emergence",
                 footer = map_footer,
-                width=12
+                width = 12
               )
             ),
             fluidRow(
@@ -221,7 +220,7 @@ app_ui <- function(request) {
                 leaflet::leafletOutput("map_dist"),
                 title = "General and Nest Disturbance and Predation",
                 footer = map_footer,
-                width=12
+                width = 12
               )
             ),
             fluidRow(
