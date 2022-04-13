@@ -155,7 +155,7 @@ app_server <- function(input, output, session) {
   output$flt_wastd_seasons <- renderUI({
     selectInput(
       "sel_wastd_seasons",
-      label = "Turtle Nesting Seasons (coming soon)",
+      label = "Turtle Nesting Seasons (FY start)",
       multiple = TRUE,
       selected = seasons(),
       choices = seasons()
@@ -472,10 +472,13 @@ app_server <- function(input, output, session) {
   })
 
   # TabPanel Emergences and Processing ----------------------------------------#
-  output$plt_emergences <- plotly::renderPlotly({
+  ggplot_wastd_emerg_area_season_species <- reactive({
     req(wastd_emergences_area()) %>%
-      wastdr::ggplot_total_emergences_per_area_season_species() %>%
-      plotly::ggplotly()
+      wastdr::ggplot_total_emergences_per_area_season_species()
+  })
+
+  output$plt_emergences <- plotly::renderPlotly({
+    req(ggplot_wastd_emerg_area_season_species()) %>% plotly::ggplotly()
   })
 
   output$tbl_total_emergences_proc_mis_area <- reactable::renderReactable({
@@ -499,16 +502,22 @@ app_server <- function(input, output, session) {
   })
 
   # TabPanel Nesting Success --------------------------------------------------#
-  output$plt_emergences_nesting_abs <- plotly::renderPlotly({
+  ggplot_wastd_emerg_nesting_abs <- reactive({
     req(wastd_nesting_area_season()) %>%
-      wastdr::ggplot_nesting_success_per_area_season_species() %>%
-      plotly::ggplotly()
+      wastdr::ggplot_nesting_success_per_area_season_species()
+  })
+
+  ggplot_wastd_emerg_nesting_rel <- reactive({
+    req(wastd_nesting_area_season()) %>%
+      wastdr::ggplot_nesting_success_per_area_season_species_pct()
+  })
+
+  output$plt_emergences_nesting_abs <- plotly::renderPlotly({
+    req(ggplot_wastd_emerg_nesting_abs()) %>% plotly::ggplotly()
   })
 
   output$plt_emergences_nesting_rel <- plotly::renderPlotly({
-    req(wastd_nesting_area_season()) %>%
-      wastdr::ggplot_nesting_success_per_area_season_species_pct() %>%
-      plotly::ggplotly()
+    req(ggplot_wastd_emerg_nesting_rel()) %>% plotly::ggplotly()
   })
 
   output$tbl_total_emergences_nesting_area_season <- reactable::renderReactable({
@@ -533,10 +542,13 @@ app_server <- function(input, output, session) {
 
   # TabPanel Recaptures -------------------------------------------------------#
   # Emergences split by sighting status: na, new, resighting, remigrant
-  output$plt_sighting_area_season <- plotly::renderPlotly({
+  ggplot_wastd_sighting_area_season <- reactive({
     req(wastd_sighting_area_season()) %>%
-      wastdr::ggplot_sighting_status_per_area_season_species() %>%
-      plotly::ggplotly()
+      wastdr::ggplot_sighting_status_per_area_season_species()
+  })
+
+  output$plt_sighting_area_season <- plotly::renderPlotly({
+    req(ggplot_wastd_sighting_area_season()) %>% plotly::ggplotly()
   })
 
   output$tbl_sighting_area_season <- reactable::renderReactable({
@@ -560,16 +572,20 @@ app_server <- function(input, output, session) {
   # req(wastd_hatching_emergence_success_area())
   # req(wastd_hatching_emergence_success_site())
 
+  ggplot_hatching_success <- reactive({
+    req(wastd_data()) %>% wastdr::ggplot_hatching_success()
+  })
+
   output$plt_hatching_success <- plotly::renderPlotly({
-    req(wastd_data()) %>%
-      wastdr::ggplot_hatching_success() %>%
-      plotly::ggplotly()
+     req(ggplot_hatching_success()) %>% plotly::ggplotly()
+  })
+
+  ggplot_emergence_success <- reactive({
+    req(wastd_data()) %>% wastdr::ggplot_emergence_success()
   })
 
   output$plt_emergence_success <- plotly::renderPlotly({
-    req(wastd_data()) %>%
-      wastdr::ggplot_emergence_success() %>%
-      plotly::ggplotly()
+    req(ggplot_emergence_success()) %>% plotly::ggplotly()
   })
 
   output$tbl_hatching_success <- reactable::renderReactable({
@@ -580,21 +596,6 @@ app_server <- function(input, output, session) {
       searchable = TRUE,
       defaultColDef = reactable::colDef(html = TRUE)
     )
-  })
-
-  # tabPanel Hatchling Misorientation -----------------------------------------#
-  output$map_fanangles <- leaflet::renderLeaflet({
-    if (is.null(wastd_data())) {
-      wastdr::leaflet_basemap()
-    } else {
-      wastdr::map_fanangles(req(wastd_data()))
-    }
-  })
-
-  output$plt_fanangles <- plotly::renderPlotly({
-    req(wastd_data()) %>%
-      wastdr::ggplot_hatchling_misorientation() %>%
-      plotly::ggplotly()
   })
 
   # tabPanel Disturbance ------------------------------------------------------#
@@ -612,6 +613,23 @@ app_server <- function(input, output, session) {
       searchable = TRUE,
       defaultColDef = reactable::colDef(html = TRUE)
     )
+  })
+
+  # Tab Hatchling Misorientation ----------------------------------------------#
+  output$map_fanangles <- leaflet::renderLeaflet({
+    if (is.null(wastd_data())) {
+      wastdr::leaflet_basemap()
+    } else {
+      wastdr::map_fanangles(req(wastd_data()))
+    }
+  })
+
+  ggplot_wastd_fans <- reactive({
+    req(wastd_data()) %>% wastdr::ggplot_hatchling_misorientation()
+  })
+
+  output$plt_fanangles <- plotly::renderPlotly({
+    req(ggplot_wastd_fans()) %>% plotly::ggplotly()
   })
 
   # Tab WAMTRAM - Places ------------------------------------------------------#

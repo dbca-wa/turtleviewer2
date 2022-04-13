@@ -8,6 +8,11 @@
 #' @noRd
 app_ui <- function(request) {
   golem::favicon("www/favicon.ico")
+  map_footer <- paste(
+    "Maximise map with fullscreen button top left.",
+    "Toggle layers top right, zoom in to expand grouped markers.",
+    "Click on markers to view popup with links to WAStD."
+  )
 
   shiny::tagList(
     # Leave this function for adding external resources
@@ -24,7 +29,6 @@ app_ui <- function(request) {
           href = "https://turtledata.dbca.wa.gov.au/"
           # image = "www/logo-dbca.png"
         ),
-        uiOutput("flt_mfi_daterange", class = "btn btn-xs"),
         uiOutput("flt_wastd_areas", class = "btn btn-xs"),
         uiOutput("flt_wastd_seasons", class = "btn btn-xs"),
         uiOutput("btn_download_wastd", class = "btn btn-xs"),
@@ -37,7 +41,8 @@ app_ui <- function(request) {
           menuItem(
             text = "Marine Fauna Incidents",
             tabName = "tab_incidents",
-            icon = icon("skull-crossbones")
+            icon = icon("skull-crossbones"),
+            startExpanded = FALSE
           ),
           menuItem(
             text = "WA Turtle Monitoring",
@@ -48,6 +53,11 @@ app_ui <- function(request) {
               text = "Turtle Nesting",
               tabName = "tab_turtle_nesting",
               icon = icon("home")
+            ),
+            menuSubItem(
+              text = "Misorientation",
+              tabName = "tab_turtle_mis",
+              icon = icon("lightbulb")
             ),
             menuSubItem(
               text = "WAMTRAM Places",
@@ -77,31 +87,47 @@ app_ui <- function(request) {
             tabName = "tab_incidents",
             fluidRow(
               bs4Card(
+                title = "Marine Fauna Incidents Dashboard",
+                tags$p(
+                  paste(
+                    "A dedicated MFI dashboard could look similar to this tab.",
+                    "It could be hosted separately to the turtle data dashboard.",
+                    "Note that only the date range filter below applies to this tab."
+                  )
+                ),
+                class = "mt-2",
+                width = 12
+              )
+            ),
+            fluidRow(
+              bs4Card(
                 title = "Incidents by taxonomic group and incident type",
+                uiOutput("flt_mfi_daterange", class = "btn btn-xs"),
                 reactable::reactableOutput("mfi_summary"),
                 class = "mt-2",
                 width = 6
               ),
               bs4Card(
                 title = "Incident map",
-                leaflet::leafletOutput("mfi_map", height = "calc(80vh)"),
+                footer = map_footer,
+                leaflet::leafletOutput("mfi_map", height = "calc(60vh)"),
                 width = 6
               )
             )
           ),
           tabItem(
             tabName = "tab_turtle_nesting",
-            leaflet::leafletOutput("wastd_map"),
             # WAStD Data Map --------------------------------------------------#
-            # fluidRow(
-            #   bs4Card(
-            #     leaflet::leafletOutput("wastd_map"),
-            #     title = "Turtle Monitoring Overview",
-            #     width = 12,
-            #     id = "box_all_wastd_data"
-            #   )
-            # ),
-            #---------------------------------------------------------------#
+            fluidRow(
+              bs4Card(
+                leaflet::leafletOutput("wastd_map"),
+                title = "Turtle Monitoring Data Overview",
+                footer = map_footer,
+                width = 12,
+                id = "box_all_wastd_data"
+              )
+            ),
+            # WAStD Data Summaries --------------------------------------------#
             fluidRow(
               tabBox(
                 tabPanel(
@@ -121,7 +147,6 @@ app_ui <- function(request) {
                 ),
                 tabPanel(
                   title = "Recaptures",
-                  shiny::tags$p("Caveat: Sighting status classification is under QA."),
                   plotly::plotlyOutput("plt_sighting_area_season", height = "600px"),
                   reactable::reactableOutput("tbl_sighting_area_season"),
                   # shiny::plotOutput("plt_processed_turtles_new_res_rem")
@@ -135,12 +160,6 @@ app_ui <- function(request) {
                   icon = icon("thumbs-up")
                 ),
                 tabPanel(
-                  title = "Hatchling Misorientation",
-                  leaflet::leafletOutput("map_fanangles"),
-                  plotly::plotlyOutput("plt_fanangles", height = "600px"),
-                  icon = icon("lightbulb")
-                ),
-                tabPanel(
                   title = "Disturbance and Predation",
                   plotly::plotlyOutput("plt_dist", height = "600px"),
                   reactable::reactableOutput("tbl_dist"),
@@ -148,6 +167,24 @@ app_ui <- function(request) {
                 ),
                 width = 12,
                 maximizable = TRUE
+              )
+            )
+          ),
+          tabItem(
+            tabName = "tab_turtle_mis",
+            fluidRow(
+              bs4Card(
+                leaflet::leafletOutput("map_fanangles"),
+                title = "Turtle Hatchling Misorientation at Nest Emergence",
+                footer = map_footer,
+                width=12
+              )
+            ),
+            fluidRow(
+              bs4Card(
+                title = "Misorientation by species and season",
+                plotly::plotlyOutput("plt_fanangles", height = "600px"),
+                width = 12
               )
             )
           ),
