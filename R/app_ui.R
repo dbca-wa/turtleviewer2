@@ -250,7 +250,6 @@ app_ui <- function(request) {
               bs4Card(
                 title = "Survey effort",
                 plotOutput("plt_svy_heatmap", height = "600px"),
-
                 width = 12
               )
             )
