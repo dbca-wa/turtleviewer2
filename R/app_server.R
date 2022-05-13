@@ -649,6 +649,17 @@ app_server <- function(input, output, session) {
     req(ggplot_wastd_fans()) %>% plotly::ggplotly()
   })
 
+  # Tab Surveys ---------------------------------------------------------------#
+  output$plt_svy_heatmap <- renderPlot({
+    req(wastd_data())$surveys %>% wastdr::survey_count_heatmap()
+  })
+
+  output$tbl_svy_season <- reactable::renderReactable({
+    req(wastd_data())$surveys %>%
+      wastdr::survey_season_stats() %>%
+      reactable::reactable()
+  })
+
   # Tab WAMTRAM - Places ------------------------------------------------------#
   output$vb_place_loc_rate <- renderbs4ValueBox({
     x <- round(100 * (nrow(req(located_places())) / nrow(req(w2_data())$sites)), 0)

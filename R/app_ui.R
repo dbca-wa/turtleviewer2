@@ -2,7 +2,7 @@
 #'
 #' @param request Internal parameter for `{shiny}`.
 #'     DO NOT REMOVE.
-#' @importFrom shiny tagList uiOutput icon fluidRow tabPanel
+#' @importFrom shiny tagList uiOutput plotOutput icon fluidRow tabPanel
 #' @import bs4Dash
 #' @import wastdr
 #' @noRd
@@ -62,6 +62,11 @@ app_ui <- function(request) {
               text = "Disturbance",
               tabName = "tab_turtle_dis",
               icon = icon("bolt")
+            ),
+            menuSubItem(
+              text = "Surveys",
+              tabName = "tab_turtle_svy",
+              icon = icon("eye")
             )
           ),
           menuItem(
@@ -228,6 +233,24 @@ app_ui <- function(request) {
                 title = "General and Nest Disturbance and Predation",
                 plotly::plotlyOutput("plt_dist", height = "600px"),
                 reactable::reactableOutput("tbl_dist"),
+                width = 12
+              )
+            )
+          ),
+          tabItem(
+            tabName = "tab_turtle_svy",
+            fluidRow(
+              bs4Card(
+                title = "Survey Stats",
+                reactable::reactableOutput("tbl_svy_season"),
+                width = 12
+              )
+            ),
+            fluidRow(
+              bs4Card(
+                title = "Survey effort",
+                plotOutput("plt_svy_heatmap", height = "600px"),
+
                 width = 12
               )
             )
