@@ -1,3 +1,5 @@
+# turtleviewer2 0.2.1
+
 # turtleviewer2 0.2.0
 * UI restructured: Turtle Monitoring, Legacy Tagging DB, Marine Faund Incidents.
 * Maps, figures, tables are now null-safe: no errors shown if data not avaiable.
