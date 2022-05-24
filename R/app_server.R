@@ -4,7 +4,7 @@
 #'     DO NOT REMOVE.
 #' @importFrom shiny reactiveFileReader reactive observe observeEvent renderUI
 #'  selectInput textInput req parseQueryString updateSelectInput renderText HTML
-#'  dateRangeInput downloadButton downloadHandler
+#'  dateRangeInput downloadButton downloadHandler renderPlot
 #' @importFrom stringr str_replace_all
 #' @import bs4Dash
 #' @noRd
@@ -677,41 +677,30 @@ app_server <- function(input, output, session) {
   coldef_img <- reactable::colDef(
     cell = function(value) {
       img_src <- here::here("inst/media", basename(value))
-      image <- htmltools::tags$img(src = img_src, width = 100, height = 100)
-      htmltools::a(href = img_src, target = "_", image)
+      image <- tags$img(src = img_src, width = 100, height = 100)
+      tags$a(href = img_src, target = "_", image)
     }
   )
 
+  tt_reactable <- . %>% reactable::reactable(
+    searchable = TRUE,
+    sortable = TRUE,
+    filterable = TRUE,
+    columns = list(
+      datasheet_photo_datasheet_front = coldef_img,
+      datasheet_photo_datasheet_rear = coldef_img,
+      ft1_ft1_photo = coldef_img,
+      ft2_ft2_photo = coldef_img,
+      ft3_ft3_photo = coldef_img
+    )
+  )
+
   output$tbl_tt_rej <- reactable::renderReactable({
-    req(odkc_data())$tt_fix %>%
-      reactable::reactable(
-        searchable = TRUE,
-        sortable = TRUE,
-        filterable = TRUE,
-        columns = list(
-          datasheet_photo_datasheet_front = coldef_img,
-          datasheet_photo_datasheet_rear = coldef_img,
-          ft1_ft1_photo = coldef_img,
-          ft2_ft2_photo = coldef_img,
-          ft3_ft3_photo = coldef_img
-        )
-      )
+    req(odkc_data())$tt_fix %>% tt_reactable()
   })
 
   output$tbl_tt_imp <- reactable::renderReactable({
-    req(odkc_data())$tt %>%
-      reactable::reactable(
-        searchable = TRUE,
-        sortable = TRUE,
-        filterable = TRUE,
-        columns = list(
-          datasheet_photo_datasheet_front = coldef_img,
-          datasheet_photo_datasheet_rear = coldef_img,
-          ft1_ft1_photo = coldef_img,
-          ft2_ft2_photo = coldef_img,
-          ft3_ft3_photo = coldef_img
-        )
-      )
+    req(odkc_data())$tt %>% tt_reactable()
   })
 
   # Tab WAMTRAM - Places ------------------------------------------------------#
