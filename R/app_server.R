@@ -20,7 +20,20 @@ app_server <- function(input, output, session) {
       1000, # Poll data file for changes every 1 second
       NULL, # across sessions
       fn_odk, # relative to project or Dockerfile workdir
-      readLines # using function readRDS
+      readLines # using function readLines
+    )
+  }
+
+  # ODK Data
+  fn_odkc <- here::here("inst/odkc_data.rds")
+  odkc_data <- if (!fs::file_exists(fn_odkc)) {
+    NULL
+  } else {
+    reactiveFileReader(
+      1000, # Poll data file for changes every 1 second
+      NULL, # across sessions
+      fn_odkc, # relative to project or Dockerfile workdir
+      readRDS # using function readRDS
     )
   }
 
@@ -658,6 +671,47 @@ app_server <- function(input, output, session) {
     req(wastd_data())$surveys %>%
       wastdr::survey_season_stats() %>%
       reactable::reactable()
+  })
+
+  # Tab Rejected --------------------------------------------------------------#
+  coldef_img <- reactable::colDef(
+    cell = function(value) {
+      img_src <- here::here("inst/media", basename(value))
+      image <- htmltools::tags$img(src = img_src, width = 100, height = 100)
+      htmltools::a(href=img_src, target="_", image)
+    }
+  )
+
+  output$tbl_tt_rej <- reactable::renderReactable({
+    req(odkc_data())$tt_fix %>%
+      reactable::reactable(
+        searchable = TRUE,
+        sortable = TRUE,
+        filterable = TRUE,
+        columns = list(
+          datasheet_photo_datasheet_front = coldef_img,
+          datasheet_photo_datasheet_rear = coldef_img,
+          ft1_ft1_photo = coldef_img,
+          ft2_ft2_photo = coldef_img,
+          ft3_ft3_photo = coldef_img
+        )
+      )
+  })
+
+  output$tbl_tt_imp <- reactable::renderReactable({
+    req(odkc_data())$tt %>%
+      reactable::reactable(
+        searchable = TRUE,
+        sortable = TRUE,
+        filterable = TRUE,
+        columns = list(
+          datasheet_photo_datasheet_front = coldef_img,
+          datasheet_photo_datasheet_rear = coldef_img,
+          ft1_ft1_photo = coldef_img,
+          ft2_ft2_photo = coldef_img,
+          ft3_ft3_photo = coldef_img
+        )
+      )
   })
 
   # Tab WAMTRAM - Places ------------------------------------------------------#

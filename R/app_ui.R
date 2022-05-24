@@ -67,6 +67,11 @@ app_ui <- function(request) {
               text = "Surveys",
               tabName = "tab_turtle_svy",
               icon = icon("eye")
+            ),
+            menuSubItem(
+              text = "ODKC",
+              tabName = "tab_odkc",
+              icon = icon("clipboard")
             )
           ),
           menuItem(
@@ -254,6 +259,23 @@ app_ui <- function(request) {
               )
             )
           ),
+
+          tabItem(
+            tabName = "tab_odkc",
+            fluidRow(
+              bs4Card(
+                title = "Rejected Turtle Tagging Records",
+                reactable::reactableOutput("tbl_tt_rej"),
+                width = 12
+              ),
+              bs4Card(
+                title = "Imported Turtle Tagging Records",
+                reactable::reactableOutput("tbl_tt_imp"),
+                width = 12
+              )
+            )
+          ),
+
           # WAMTRAM Places
           tabItem(
             tabName = "tab_w2_places",
