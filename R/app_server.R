@@ -678,7 +678,7 @@ app_server <- function(input, output, session) {
     cell = function(value) {
       img_src <- here::here("inst/media", basename(value))
       image <- htmltools::tags$img(src = img_src, width = 100, height = 100)
-      htmltools::a(href=img_src, target="_", image)
+      htmltools::a(href = img_src, target = "_", image)
     }
   )
 

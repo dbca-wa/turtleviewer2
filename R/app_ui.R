@@ -259,7 +259,6 @@ app_ui <- function(request) {
               )
             )
           ),
-
           tabItem(
             tabName = "tab_odkc",
             fluidRow(
