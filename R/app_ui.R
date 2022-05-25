@@ -19,6 +19,7 @@ app_ui <- function(request) {
     golem_add_external_resources(),
     waiter::autoWaiter(),
     dashboardPage(
+      title = "WA Turtle Data",
       fullscreen = TRUE,
       scrollToTop = TRUE,
       # preloader = list(html = waiter::spin_chasing_dots(), color = "#333e48"),
@@ -365,9 +366,9 @@ app_ui <- function(request) {
             )
           )
         ) # /tabItems
-      ),
-      # controlbar = dashboardControlbar(),
-      title = "WA Turtle Data"
+      )
+
+
     )
   ) # /tagList
 }

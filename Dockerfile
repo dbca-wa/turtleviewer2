@@ -40,12 +40,14 @@ RUN Rscript -e 'remotes::install_github("RinteRface/bs4Dash")'
 RUN Rscript -e 'remotes::install_github("dbca-wa/wastdr", upgrade = "never")'
 
 FROM rlibs
-RUN mkdir /app
+RUN mkdir -p /app/inst/media
 ADD . /app
 WORKDIR /app
 RUN R -e 'remotes::install_local(upgrade="always", force=TRUE, dependencies = TRUE)'
 
-# Mount a volume to /app/inst that is shared with etlTurtleNesting
-RUN mkdir -p /app/inst
 EXPOSE 80
 CMD R -e "options('shiny.port'=80,shiny.host='0.0.0.0');turtleviewer2::run_app()"
+# App runs in /app
+# Mount a volume to /app/inst from turtleviewer2 and etlTurtleNesting
+# Place data files in /app/inst
+# Place media files in /app/inst/media

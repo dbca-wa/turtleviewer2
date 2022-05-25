@@ -673,12 +673,21 @@ app_server <- function(input, output, session) {
       reactable::reactable()
   })
 
-  # Tab Rejected --------------------------------------------------------------#
+  # Tab ODKC ------------------------------------------------------------------#
   coldef_img <- reactable::colDef(
     cell = function(value) {
-      img_src <- fs::path("media", basename(value))
-      image <- tags$img(src = img_src, width = 100, height = 100)
-      tags$a(href = img_src, target = "_", image)
+      if (basename(value) != "NA") {
+        img_src <- fs::path("media", basename(value))
+        image <- tags$img(
+          src = img_src,
+          alt = glue::glue("Image {value} hosted at {img_src}"),
+          width = 100,
+          height = 100
+        )
+        tags$a(href = img_src, target = "_", image)
+      } else {
+        "No image"
+      }
     }
   )
 
