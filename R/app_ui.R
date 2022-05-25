@@ -367,8 +367,6 @@ app_ui <- function(request) {
           )
         ) # /tabItems
       )
-
-
     )
   ) # /tagList
 }
