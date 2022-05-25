@@ -676,7 +676,7 @@ app_server <- function(input, output, session) {
   # Tab Rejected --------------------------------------------------------------#
   coldef_img <- reactable::colDef(
     cell = function(value) {
-      img_src <- here::here("inst/media", basename(value))
+      img_src <- fs::path("media", basename(value))
       image <- tags$img(src = img_src, width = 100, height = 100)
       tags$a(href = img_src, target = "_", image)
     }
