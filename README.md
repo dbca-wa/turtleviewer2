@@ -78,7 +78,7 @@ upload.
   - Build Docker image for local testing (see below).
   - Run e.g. through [Portainer](https://www.portainer.io) with
       - Name: e.g. “tv”
-      - Image: advanced mode, `dbca-wa/turtleviewer2:latest`
+      - Image: advanced mode, `ghcr.io/dbca-wa/turtleviewer2`
       - Always pull image: off
       - Publish ports: on
       - Volumes: container path `/app/inst`, use named volume or bind
@@ -104,13 +104,13 @@ run_app()
 Build Docker image for local testing:
 
 ``` bash
-docker build . -t dbca-wa/turtleviewer2:latest
+docker build -t ghcr.io/dbca-wa/turtleviewer2 .
 ```
 
 Inspect the locally built image for debugging:
 
 ``` bash
-docker run -it dbca-wa/turtleviewer2:latest /bin/bash -c "export TERM=xterm; exec bash"
+docker run -it ghcr.io/dbca-wa/turtleviewer2 /bin/bash -c "export TERM=xterm; exec bash"
 ```
 
 ## Deployment
